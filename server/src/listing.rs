@@ -37,6 +37,8 @@ pub struct PartyFinderListing {
     pub search_area: SearchAreaFlags,
     pub slots: Vec<PartyFinderSlot>,
     pub jobs_present: Vec<u8>,
+    #[serde(default)]
+    pub member_content_ids: Vec<i64>,
 }
 
 #[allow(unused)]

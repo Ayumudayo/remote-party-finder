@@ -5,8 +5,8 @@ xivpf - listings
 {%- endblock %}
 
 {% block head %}
-<link rel="stylesheet" href="/assets/common.css"/>
-<link rel="stylesheet" href="/assets/listings.css"/>
+<link rel="stylesheet" href="/assets/common.css" />
+<link rel="stylesheet" href="/assets/listings.css" />
 <script defer src="/assets/list.js"></script>
 <script defer src="/assets/listings.js"></script>
 {% endblock %}
@@ -15,7 +15,7 @@ xivpf - listings
 <div id="container">
     <div class="requires-js settings">
         <div class="controls">
-            <input type="search" class="search" placeholder="search"/>
+            <input type="search" class="search" placeholder="search" />
             <select id="data-centre-filter">
                 <option value="All">all</option>
                 <optgroup label="north america">
@@ -55,20 +55,20 @@ xivpf - listings
                     </div>
                     <div class="roles" id="role-filter">
                         {%- for (role, jobs) in JobFlags::get_all_jobs() %}
-                            <small>
-                                {{ role.text(lang) }}
-                            </small>
-                            <div>
-                                {%- for job in jobs %}
-                                {%- let code = job.classjobs()[0].code() %}
-                                    <input type="checkbox" id="{{ code }}" value="{{ job.bits() }}"></input>
-                                    <label for="{{ code }}" title="{{ code }}" class="{{ job.html_classes() }}">
-                                        <svg viewBox="0 0 32 32">
-                                            <use href="/assets/icons.svg#{{ code }}"></use>
-                                        </svg>
-                                    </label>
-                                {%- endfor %}
-                            </div>
+                        <small>
+                            {{ role.text(lang) }}
+                        </small>
+                        <div>
+                            {%- for job in jobs %}
+                            {%- let code = job.classjobs()[0].code() %}
+                            <input type="checkbox" id="{{ code }}" value="{{ job.bits() }}"></input>
+                            <label for="{{ code }}" title="{{ code }}" class="{{ job.html_classes() }}">
+                                <svg viewBox="0 0 32 32">
+                                    <use href="/assets/icons.svg#{{ code }}"></use>
+                                </svg>
+                            </label>
+                            {%- endfor %}
+                        </div>
                         {%- endfor %}
                     </div>
                 </div>
@@ -79,15 +79,12 @@ xivpf - listings
         {%- if containers.is_empty() %}
         <em class="no-listings">No listings - download the plugin to help contribute!</em>
         {%- endif %}
-        {%- for container in containers %}
-        {%- let listing = container.listing.borrow() %}
-        <div
-          class="listing"
-          data-id="{{ listing.id }}"
-          data-centre="{{ listing.data_centre_name().unwrap_or_default() }}"
-          data-pf-category="{{ listing.html_pf_category() }}"
-          data-joinable-roles="{{ listing.joinable_roles() }}"
-          data-num-parties="{{ listing.num_parties }}">
+        {%- for renderable in containers %}
+        {%- let listing = renderable.container.listing.borrow() %}
+        <div class="listing" data-id="{{ listing.id }}"
+            data-centre="{{ listing.data_centre_name().unwrap_or_default() }}"
+            data-pf-category="{{ listing.html_pf_category() }}" data-joinable-roles="{{ listing.joinable_roles() }}"
+            data-num-parties="{{ listing.num_parties }}">
 
             <div class="left">
                 {%- let duty_class %}
@@ -104,9 +101,9 @@ xivpf - listings
                     {%- else -%}
                     {%- let (colour_class, prepend_flags) = listing.prepend_flags() -%}
                     {%- if !prepend_flags.is_empty() -%}
-                    <span class="{{ colour_class }}">{{ prepend_flags }} </span>
+                    <div class="flags {{ colour_class }}">{{ prepend_flags }}</div>
                     {%- endif -%}
-                    {{- desc.trim() }}
+                    <div class="desc-text">{{- desc.trim() }}</div>
                     {%- endif -%}
                 </div>
                 <div class="party">
@@ -139,6 +136,25 @@ xivpf - listings
                     {%- endfor %}
                     <div class="total">{{ listing.slots_filled() }}/{{ listing.slots_available }}</div>
                 </div>
+                <div class="members-list">
+                    <div class="members-header">Members ({{ renderable.members.len() }})</div>
+                    {%- if renderable.members.is_empty() %}
+                    <p class="no-members"><em>No information available for other members</em></p>
+                    {%- else %}
+                    <ul>
+                        {%- for member in renderable.members %}
+                        <li>
+                            {%- if let Some(code) = member.job_code() %}
+                            <svg class="job-icon {{ member.role_class() }}" viewBox="0 0 32 32">
+                                <use href="/assets/icons.svg#{{ code }}"></use>
+                            </svg>
+                            {%- endif %}
+                            {{ member.player.name }} <small>@ {{ member.player.home_world_name() }}</small>
+                        </li>
+                        {%- endfor %}
+                    </ul>
+                    {%- endif %}
+                </div>
             </div>
             <div class="middle">
                 <div class="stat">
@@ -164,7 +180,7 @@ xivpf - listings
                     </span>
                 </div>
                 <div class="item expires">
-                    <span class="text">{{ container.human_time_left() }}</span>
+                    <span class="text">{{ renderable.container.human_time_left() }}</span>
                     <span title="Expires">
                         <svg class="icon" viewBox="0 0 32 32">
                             <use href="/assets/icons.svg#stopwatch"></use>
@@ -172,7 +188,7 @@ xivpf - listings
                     </span>
                 </div>
                 <div class="item updated">
-                    <span class="text">{{ container.human_since_updated() }}</span>
+                    <span class="text">{{ renderable.container.human_since_updated() }}</span>
                     <span title="Updated">
                         <svg class="icon" viewBox="0 0 32 32">
                             <use href="/assets/icons.svg#clock"></use>

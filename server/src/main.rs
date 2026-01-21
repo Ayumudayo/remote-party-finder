@@ -22,6 +22,7 @@ mod ws;
 
 mod api;
 mod mongo;
+mod player;
 #[cfg(test)]
 mod test;
 

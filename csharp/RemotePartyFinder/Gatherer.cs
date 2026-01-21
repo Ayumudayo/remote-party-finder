@@ -42,7 +42,7 @@ internal class Gatherer : IDisposable {
     }
 
     private void OnUpdate(IFramework framework1) {
-        if (this.UploadTimer.Elapsed < TimeSpan.FromSeconds(10)) {
+        if (this.UploadTimer.Elapsed < TimeSpan.FromSeconds(3)) {
             return;
         }
 
@@ -58,11 +58,21 @@ internal class Gatherer : IDisposable {
 
                 foreach (var uploadUrl in Plugin.Configuration.UploadUrls.Where(uploadUrl => uploadUrl.IsEnabled))
                 {
-                    var resp = await this.Client.PostAsync(uploadUrl.Url, new StringContent(json) {
+                    var baseUrl = uploadUrl.Url.TrimEnd('/');
+
+                    if (baseUrl.EndsWith("/contribute/multiple")) {
+                        baseUrl = baseUrl.Substring(0, baseUrl.Length - "/contribute/multiple".Length);
+                    } else if (baseUrl.EndsWith("/contribute")) {
+                        baseUrl = baseUrl.Substring(0, baseUrl.Length - "/contribute".Length);
+                    }
+
+                    var targetUrl = baseUrl + "/contribute/multiple";
+
+                    var resp = await this.Client.PostAsync(targetUrl, new StringContent(json) {
                         Headers = { ContentType = MediaTypeHeaderValue.Parse("application/json") },
                     });
                     var output = await resp.Content.ReadAsStringAsync();
-                    Plugin.Log.Info($"{uploadUrl.Url}:\n{output}");
+                    Plugin.Log.Info($"{targetUrl}:\n{output}");
                 }
             });
         }

@@ -2,7 +2,7 @@
     margin: 0 1em;
 }
 
-.filter-controls > div {
+.filter-controls>div {
     display: flex;
     flex-flow: row wrap;
 }
@@ -14,12 +14,12 @@
     margin-left: 1em;
 }
 
-.filter-controls .control > label {
+.filter-controls .control>label {
     display: flex;
     flex-direction: column;
 }
 
-.filter-controls .control > label > * {
+.filter-controls .control>label>* {
     flex: 1 1 auto;
     margin-bottom: 0;
     margin-top: .5em;
@@ -31,11 +31,11 @@
     margin-left: 1em;
 }
 
-.filter-controls .roles > div > input[type=checkbox] {
+.filter-controls .roles>div>input[type=checkbox] {
     display: none;
 }
 
-.filter-controls .roles > div > label {
+.filter-controls .roles>div>label {
     width: 2em;
     height: 2em;
     opacity: 50%;
@@ -43,28 +43,28 @@
     border: 1px solid currentColor;
 }
 
-.filter-controls .roles > div > label.healer {
+.filter-controls .roles>div>label.healer {
     background-color: var(--healer-green);
 }
 
-.filter-controls .roles > div > label.tank {
+.filter-controls .roles>div>label.tank {
     background-color: var(--tank-blue);
 }
 
-.filter-controls .roles > div > label.dps {
+.filter-controls .roles>div>label.dps {
     background-color: var(--dps-red);
 }
 
-.filter-controls .roles > div > label:hover {
+.filter-controls .roles>div>label:hover {
     opacity: 75%;
 }
 
-.filter-controls .roles > div > input[type=checkbox]:checked + label {
+.filter-controls .roles>div>input[type=checkbox]:checked+label {
     border: 1px solid currentColor;
     opacity: 100%;
 }
 
-.filter-controls .roles > div > label > svg  {
+.filter-controls .roles>div>label>svg {
     width: 100%;
     height: 100%;
     fill: var(--icon-gold);
@@ -76,20 +76,20 @@
     margin-top: 1em;
 }
 
-#container > .settings > .controls {
+#container>.settings>.controls {
     display: flex;
     justify-content: space-between;
 }
 
-#container > .settings > .controls > .search {
+#container>.settings>.controls>.search {
     margin-right: 1em;
 }
 
-#listings > .no-listings {
+#listings>.no-listings {
     margin-top: 1em;
 }
 
-#listings > .listing {
+#listings>.listing {
     display: grid;
     grid-template-columns: 3fr auto 2fr;
     gap: 1em;
@@ -100,45 +100,45 @@
     /*     background-color: var(--row-background); */
 }
 
-#listings > .listing:nth-child(2n) {
+#listings>.listing:nth-child(2n) {
     background-color: var(--muted-border-color);
     /*     background-color: var(--row-background-alternate); */
 }
 
-#listings > .listing .description {
+#listings>.listing .description {
     white-space: pre-wrap;
     word-break: break-word;
 }
 
-#listings > .listing .description .desc-green {
+#listings>.listing .description .desc-green {
     color: var(--green-text);
 }
 
-#listings > .listing .description .desc-blue {
+#listings>.listing .description .desc-blue {
     color: var(--light-blue-text);
 }
 
-#listings > .listing .description .desc-yellow {
+#listings>.listing .description .desc-yellow {
     color: var(--gold-text);
 }
 
-#listings > .listing .stat {
+#listings>.listing .stat {
     color: var(--meta-text);
 }
 
-#listings > .listing .duty {
+#listings>.listing .duty {
     font-size: 1.2em;
 }
 
-#listings > .listing .duty.cross {
+#listings>.listing .duty.cross {
     color: var(--cross-duty-text);
 }
 
-#listings > .listing .duty.local {
+#listings>.listing .duty.local {
     color: var(--local-duty-text);
 }
 
-#listings > .listing .meta {
+#listings>.listing .meta {
     display: flex;
     flex-direction: column;
 
@@ -148,13 +148,13 @@
     text-align: right;
 }
 
-#listings > .listing .meta > .item {
+#listings>.listing .meta>.item {
     display: flex;
     flex-flow: row nowrap;
     align-self: flex-end;
 }
 
-#listings > .listing .meta > .item .icon {
+#listings>.listing .meta>.item .icon {
     height: 1em;
     width: 1em;
     fill: var(--text);
@@ -163,7 +163,7 @@
     justify-self: center;
 }
 
-#listings > .listing .party {
+#listings>.listing .party {
     margin-top: .5em;
 
     display: grid;
@@ -171,119 +171,179 @@
     gap: .5em;
 }
 
-#listings > .listing .party > .total {
+#listings>.listing .party>.total {
     align-self: center;
     justify-self: center;
 }
 
-#listings > .listing .party > .slot {
+#listings>.listing .party>.slot {
     width: 2em;
     height: 2em;
     border: 1px solid currentColor;
     margin-right: .5em;
 }
 
-#listings > .listing .party > .slot:not(.filled).dps.tank {
-    background: linear-gradient(
-            to bottom,
+#listings>.listing .party>.slot:not(.filled).dps.tank {
+    background: linear-gradient(to bottom,
             var(--tank-blue) 0%,
             var(--tank-blue) 50%,
-            var(--dps-red) 50%
-    );
+            var(--dps-red) 50%);
 }
 
-#listings > .listing .party > .slot:not(.filled).dps.healer {
-    background: linear-gradient(
-            to bottom,
+#listings>.listing .party>.slot:not(.filled).dps.healer {
+    background: linear-gradient(to bottom,
             var(--healer-green) 0%,
             var(--healer-green) 50%,
-            var(--dps-red) 50%
-    );
+            var(--dps-red) 50%);
 }
 
-#listings > .listing .party > .slot:not(.filled).tank.healer {
-    background: linear-gradient(
-            to bottom,
+#listings>.listing .party>.slot:not(.filled).tank.healer {
+    background: linear-gradient(to bottom,
             var(--tank-blue) 0%,
             var(--tank-blue) 50%,
-            var(--healer-green) 50%
-    );
+            var(--healer-green) 50%);
 }
 
-#listings > .listing .party > .slot:not(.filled).tank.healer.dps {
-    background: linear-gradient(
-            to bottom,
+#listings>.listing .party>.slot:not(.filled).tank.healer.dps {
+    background: linear-gradient(to bottom,
             var(--tank-blue) 0%,
             var(--tank-blue) 33%,
             var(--healer-green) 33%,
             var(--healer-green) 66%,
-            var(--dps-red) 66%
-    );
+            var(--dps-red) 66%);
 }
 
-#listings > .listing .party > .slot:not(.filled).dps {
+#listings>.listing .party>.slot:not(.filled).dps {
     background-color: var(--dps-red);
 }
 
-#listings > .listing .party > .slot.filled {
+#listings>.listing .party>.slot.filled {
     background-color: var(--slot-background);
     border-color: var(--icon-gold);
 }
 
-#listings > .listing .party > .slot.empty {
+#listings>.listing .party>.slot.empty {
     background-color: var(--slot-empty);
 }
 
-#listings > .listing .party > .slot.dps {
+#listings>.listing .party>.slot.dps {
     background-color: var(--dps-red);
 }
 
-#listings > .listing .party > .slot.healer {
+#listings>.listing .party>.slot.healer {
     background-color: var(--healer-green);
 }
 
-#listings > .listing .party > .slot.tank {
+#listings>.listing .party>.slot.tank {
     background-color: var(--tank-blue);
 }
 
-#listings > .listing .party > .slot > svg {
+#listings>.listing .party>.slot>svg {
     width: 100%;
     height: 100%;
     fill: var(--icon-gold);
 }
 
-#listings > .listing .party > .slot.filled:not(.dps):not(.healer):not(.tank) > svg {
+#listings>.listing .party>.slot.filled:not(.dps):not(.healer):not(.tank)>svg {
     fill: #C6C6C6;
 }
 
 @media (max-width: 50em) {
-    #listings > .listing {
+    #listings>.listing {
         grid-template-columns: repeat(auto-fit, 100%);
     }
 
-    #listings > .listing > :not(:first-child) {
+    #listings>.listing> :not(:first-child) {
         margin: 0;
     }
 
-    #listings > .listing .meta {
+    #listings>.listing .meta {
         text-align: unset;
     }
 
-    #listings > .listing .meta > .item {
+    #listings>.listing .meta>.item {
         align-self: unset;
     }
 
-    #listings > .listing .meta > .item .icon {
+    #listings>.listing .meta>.item .icon {
         order: 1;
         margin-left: 0;
         margin-right: .5em;
     }
 
-    #listings > .listing .meta > .item .text {
+    #listings>.listing .meta>.item .text {
         order: 2;
     }
 
-    .filter-controls .roles > div > label:hover {
+    .filter-controls .roles>div>label:hover {
         opacity: 50%;
     }
+}
+
+#listings>.listing .members-list {
+    margin-top: 0.5em;
+    font-size: 0.9em;
+}
+
+#listings>.listing .members-list .members-header {
+    color: var(--meta-text);
+    font-size: 0.85em;
+    margin-bottom: 0.3em;
+}
+
+#listings>.listing .members-list ul {
+    list-style: none;
+    padding-left: 1em;
+    margin: 0.2em 0;
+}
+
+#listings>.listing .members-list li {
+    margin-bottom: 0.1em;
+    display: flex;
+    align-items: center;
+    gap: 0.3em;
+}
+
+#listings>.listing .members-list .job-icon {
+    width: 1.2em;
+    height: 1.2em;
+    flex-shrink: 0;
+}
+
+#listings>.listing .members-list .job-icon.tank {
+    color: var(--tank-blue, #3a7fc4);
+}
+
+#listings>.listing .members-list .job-icon.healer {
+    color: var(--healer-green, #3dc483);
+}
+
+#listings>.listing .members-list .job-icon.dps {
+    color: var(--dps-red, #c44848);
+}
+
+#listings>.listing .members-list .world {
+    color: var(--meta-text);
+    font-size: 0.85em;
+}
+
+#listings>.listing .members-list li.leader {
+    font-weight: bold;
+    color: #ffcc00;
+}
+
+#listings>.listing .members-list .badge {
+    background-color: #ffcc00;
+    color: #1a1a2e;
+    padding: 0.1em 0.4em;
+    border-radius: 3px;
+    font-size: 0.75em;
+    margin-left: 0.3em;
+    font-weight: bold;
+}
+
+#listings>.listing .members-list .no-members {
+    color: var(--meta-text);
+    font-size: 0.85em;
+    margin: 0.3em 0 0.3em 1em;
 }

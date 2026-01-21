@@ -3,13 +3,14 @@ use crate::ffxiv::duties::DutyInfo;
 use crate::ffxiv::Language;
 use crate::listing::{ConditionFlags, DutyFinderSettingsFlags, LootRuleFlags, ObjectiveFlags, PartyFinderListing, PartyFinderSlot, SearchAreaFlags};
 use crate::listing_container::QueriedListing;
-use crate::mongo::get_current_listings;
+use crate::mongo::{get_current_listings, get_players_by_content_ids};
 use crate::sestring_ext::SeStringExt;
 use crate::web::State;
 use crate::ws::WsApiClient;
 use chrono::{DateTime, Utc};
 use serde::Serialize;
 use sestring::SeString;
+use std::collections::HashMap;
 use std::convert::Infallible;
 use std::sync::Arc;
 use warp::filters::BoxedFilter;
@@ -28,8 +29,34 @@ fn listings(state: Arc<State>) -> BoxedFilter<(impl Reply,)> {
 
         match listings {
             Ok(listings) => {
+                // Collect all member IDs
+                let all_content_ids: Vec<u64> = listings.iter()
+                    .flat_map(|l| l.listing.member_content_ids.iter().map(|&id| id as u64))
+                    .collect();
+                
+                // Fetch players
+                let players = get_players_by_content_ids(state.players_collection(), &all_content_ids).await.unwrap_or_default();
+                let player_map: HashMap<u64, crate::player::Player> = players.into_iter().map(|p| (p.content_id, p)).collect();
+
                 let listings: Vec<ApiReadableListingContainer> = listings.into_iter()
-                    .map(|listing| listing.into())
+                    .map(|ql| {
+                        let member_ids = ql.listing.member_content_ids.clone();
+                        let mut container: ApiReadableListingContainer = ql.into();
+                        
+                        container.listing.members = member_ids.iter()
+                            .filter_map(|id| {
+                                let uid = *id as u64;
+                                player_map.get(&uid)
+                            })
+                            .map(|p| ApiReadableMember {
+                                content_id: p.content_id,
+                                name: p.name.clone(),
+                                home_world: p.home_world.into(),
+                            })
+                            .collect();
+                        
+                        container
+                    })
                     .collect();
                 Ok(warp::reply::json(&listings).into_response())
             },
@@ -111,6 +138,14 @@ struct ApiReadableListing {
     search_area: ApiReadableSearchAreaFlags,
     slots: Vec<ApiReadablePartyFinderSlot>,
     slots_filled: Vec<Option<&'static str>>, // None if not filled, otherwise the job code
+    members: Vec<ApiReadableMember>,
+}
+
+#[derive(Serialize)]
+struct ApiReadableMember {
+    content_id: u64,
+    name: String,
+    home_world: ApiReadableWorld,
 }
 
 #[derive(Serialize)]
@@ -169,6 +204,7 @@ impl From<PartyFinderListing> for ApiReadableListing {
             search_area: value.search_area.into(),
             slots: value.slots.into_iter().map(|s| s.into()).collect(),
             slots_filled,
+            members: Vec::new(),
         }
     }
 }

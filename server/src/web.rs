@@ -1,4 +1,4 @@
-use std::{cmp::Ordering, convert::Infallible, sync::Arc, time::Duration};
+use std::{cmp::Ordering, collections::HashMap, convert::Infallible, sync::Arc, time::Duration};
 
 use anyhow::{Context, Result};
 use mongodb::{
@@ -11,7 +11,8 @@ use tokio::sync::RwLock;
 use warp::{filters::BoxedFilter, http::Uri, Filter, Reply};
 
 use crate::api::api;
-use crate::mongo::{get_current_listings, insert_listing};
+use crate::mongo::{get_current_listings, insert_listing, upsert_players, get_players_by_content_ids};
+use crate::player::{Player, UploadablePlayer};
 use crate::{
     config::Config, ffxiv::Language, listing::PartyFinderListing,
     listing_container::ListingContainer, stats::CachedStatistics,
@@ -110,6 +111,10 @@ impl State {
     pub fn collection(&self) -> Collection<ListingContainer> {
         self.mongo.database("rpf").collection("listings")
     }
+
+    pub fn players_collection(&self) -> Collection<Player> {
+        self.mongo.database("rpf").collection("players")
+    }
 }
 
 fn router(state: Arc<State>) -> BoxedFilter<(impl Reply,)> {
@@ -117,6 +122,8 @@ fn router(state: Arc<State>) -> BoxedFilter<(impl Reply,)> {
         .or(listings(Arc::clone(&state)))
         .or(contribute(Arc::clone(&state)))
         .or(contribute_multiple(Arc::clone(&state)))
+        .or(contribute_players(Arc::clone(&state)))
+        .or(contribute_detail(Arc::clone(&state)))
         .or(stats(Arc::clone(&state)))
         .or(stats_seven_days(Arc::clone(&state)))
         .or(assets())
@@ -246,6 +253,46 @@ fn listings(state: Arc<State>) -> BoxedFilter<(impl Reply,)> {
 
                 containers.sort_by_key(|container| container.updated_minute);
                 containers.reverse();
+
+                // Collect all member IDs
+                let all_content_ids: Vec<u64> = containers.iter()
+                    .flat_map(|l| l.listing.member_content_ids.iter().map(|&id| id as u64))
+                    .collect();
+                
+                // Fetch players
+                let players_list = get_players_by_content_ids(state.players_collection(), &all_content_ids).await.unwrap_or_default();
+                let players: HashMap<u64, crate::player::Player> = players_list.into_iter().map(|p| (p.content_id, p)).collect();
+
+                // Match players to listings with job info
+                let containers: Vec<crate::template::listings::RenderableListing> = containers.into_iter()
+                    .map(|container| {
+                        // jobs_present와 member_content_ids는 같은 인덱스로 매칭됨
+                        let jobs = &container.listing.jobs_present;
+                        let content_ids = &container.listing.member_content_ids;
+                        
+                        let members: Vec<crate::template::listings::RenderableMember> = content_ids.iter()
+                            .enumerate()
+                            .filter(|(_, id)| **id != 0) // 빈 슬롯 제외
+                            .map(|(i, id)| {
+                                let uid = *id as u64;
+                                let job_id = jobs.get(i).copied().unwrap_or(0);
+                                let player = players.get(&uid).cloned().unwrap_or(crate::player::Player {
+                                    content_id: uid,
+                                    name: "Unknown Member".to_string(),
+                                    home_world: 0,
+                                    last_seen: chrono::Utc::now(),
+                                    seen_count: 0,
+                                });
+                                crate::template::listings::RenderableMember { job_id, player }
+                            })
+                            .collect();
+                        
+                        crate::template::listings::RenderableListing {
+                            container,
+                            members,
+                        }
+                    })
+                    .collect();
 
                 ListingsTemplate { containers, lang }
             }
@@ -382,5 +429,90 @@ fn contribute_multiple(state: Arc<State>) -> BoxedFilter<(impl Reply,)> {
         .and(warp::path::end())
         .and(warp::body::json())
         .and_then(move |listings: Vec<PartyFinderListing>| logic(Arc::clone(&state), listings));
+    warp::post().and(route).boxed()
+}
+
+fn contribute_players(state: Arc<State>) -> BoxedFilter<(impl Reply,)> {
+    async fn logic(
+        state: Arc<State>,
+        players: Vec<UploadablePlayer>,
+    ) -> std::result::Result<impl Reply, Infallible> {
+        let total = players.len();
+        let result = upsert_players(state.players_collection(), &players).await;
+
+        match result {
+            Ok(successful) => Ok(format!("{}/{} players updated", successful, total)),
+            Err(e) => {
+                eprintln!("error upserting players: {:#?}", e);
+                Ok(format!("0/{} players updated (error)", total))
+            }
+        }
+    }
+
+    let route = warp::path("contribute")
+        .and(warp::path("players"))
+        .and(warp::path::end())
+        .and(warp::body::json())
+        .and_then(move |players: Vec<UploadablePlayer>| logic(Arc::clone(&state), players));
+    warp::post().and(route).boxed()
+}
+
+/// 파티 상세 정보 (멤버 ContentId 목록)
+#[derive(Debug, serde::Deserialize)]
+struct UploadablePartyDetail {
+    listing_id: u32,
+    leader_content_id: u64,
+    leader_name: String,
+    home_world: u16,
+    member_content_ids: Vec<u64>,
+}
+
+fn contribute_detail(state: Arc<State>) -> BoxedFilter<(impl Reply,)> {
+    async fn logic(
+        state: Arc<State>,
+        detail: UploadablePartyDetail,
+    ) -> std::result::Result<impl Reply, Infallible> {
+        // 멤버 ContentId를 플레이어 테이블에도 upsert (이름은 null이지만 ContentId는 알게 됨)
+        // 또한 listing에 member_content_ids를 업데이트
+        
+        // 리더 정보를 플레이어로 저장
+        if detail.leader_content_id != 0 && !detail.leader_name.is_empty() && detail.home_world < 1000 {
+            let leader = crate::player::UploadablePlayer {
+                content_id: detail.leader_content_id,
+                name: detail.leader_name.clone(),
+                home_world: detail.home_world,
+            };
+            let upsert_res = upsert_players(state.players_collection(), &[leader]).await;
+            eprintln!("Upserted leader {}: {:?}", detail.leader_content_id, upsert_res);
+        } else {
+            eprintln!("Skipping leader upsert: ID={} Name='{}' World={}", detail.leader_content_id, detail.leader_name, detail.home_world);
+        }
+
+        // listing에 member_content_ids 저장
+        let member_count = detail.member_content_ids.len();
+        let member_ids_i64: Vec<i64> = detail.member_content_ids.iter().map(|&id| id as i64).collect();
+
+        let update_result = state.collection()
+            .update_one(
+                mongodb::bson::doc! { "listing.id": detail.listing_id },
+                mongodb::bson::doc! {
+                    "$set": {
+                        "listing.member_content_ids": member_ids_i64,
+                    }
+                },
+                None,
+            )
+            .await;
+
+        eprintln!("Updated listing {} members: {:?}", detail.listing_id, update_result);
+
+        Ok(warp::reply::json(&"ok"))
+    }
+
+    let route = warp::path("contribute")
+        .and(warp::path("detail"))
+        .and(warp::path::end())
+        .and(warp::body::json())
+        .and_then(move |detail: UploadablePartyDetail| logic(Arc::clone(&state), detail));
     warp::post().and(route).boxed()
 }

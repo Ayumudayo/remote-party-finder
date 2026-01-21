@@ -6,6 +6,7 @@
         <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
         <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -41,6 +42,10 @@
 
         <Reference Include="Dalamud.Bindings.ImGui">
           <HintPath>$(DalamudLibPath)\Dalamud.Bindings.ImGui.dll</HintPath>
+          <Private>false</Private>
+        </Reference>
+        <Reference Include="FFXIVClientStructs">
+          <HintPath>$(DalamudLibPath)\FFXIVClientStructs.dll</HintPath>
           <Private>false</Private>
         </Reference>
     </ItemGroup>

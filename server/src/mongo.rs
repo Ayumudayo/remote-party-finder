@@ -120,3 +120,70 @@ pub async fn insert_listing(
         .await
         .context("could not insert record")
 }
+
+/// 플레이어 정보를 upsert (있으면 업데이트, 없으면 삽입)
+pub async fn upsert_players(
+    collection: Collection<crate::player::Player>,
+    players: &[crate::player::UploadablePlayer],
+) -> anyhow::Result<usize> {
+    let mut successful = 0;
+    let now = Utc::now();
+
+    for player in players {
+        if player.content_id == 0 || player.name.is_empty() || player.home_world >= 1_000 {
+            continue;
+        }
+
+        let opts = UpdateOptions::builder().upsert(true).build();
+        let result = collection
+            .update_one(
+                doc! { "content_id": player.content_id as i64 },
+                doc! {
+                    "$set": {
+                        "name": &player.name,
+                        "home_world": player.home_world as u32,
+                        "last_seen": now,
+                    },
+                    "$inc": { "seen_count": 1 },
+                    "$setOnInsert": {
+                        "content_id": player.content_id as i64,
+                    },
+                },
+                opts,
+            )
+            .await;
+
+        if result.is_ok() {
+            successful += 1;
+        }
+    }
+
+    Ok(successful)
+}
+
+/// ContentID 목록으로 플레이어 정보 조회
+pub async fn get_players_by_content_ids(
+    collection: Collection<crate::player::Player>,
+    content_ids: &[u64],
+) -> anyhow::Result<Vec<crate::player::Player>> {
+    let ids: Vec<i64> = content_ids.iter().map(|&id| id as i64).collect();
+    
+    let cursor = collection
+        .find(doc! { "content_id": { "$in": ids } }, None)
+        .await?;
+
+    let players = cursor
+        .filter_map(async |res| {
+            match res {
+                Ok(p) => Some(p),
+                Err(e) => {
+                    eprintln!("Error reading player: {:?}", e);
+                    None
+                }
+            }
+        })
+        .collect::<Vec<_>>()
+        .await;
+
+    Ok(players)
+}
