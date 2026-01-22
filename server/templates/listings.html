@@ -6,9 +6,9 @@ xivpf - listings
 
 {% block head %}
 <link rel="stylesheet" href="/assets/common.css" />
-<link rel="stylesheet" href="/assets/listings.css" />
+<link rel="stylesheet" href="/assets/listings.css?v=10" />
 <script defer src="/assets/list.js"></script>
-<script defer src="/assets/listings.js"></script>
+<script defer src="/assets/listings.js?v=2"></script>
 {% endblock %}
 
 {% block body %}
@@ -150,10 +150,14 @@ xivpf - listings
                             </svg>
                             {%- endif %}
 
-                            {%- if let Some(percentile) = member.parse_percentile %}
-                            <span class="parse {{ member.parse_color_class }}" title="Best Parse: {{ percentile }}">{{ percentile }}</span>
-                            {%- endif %}
-                            
+                            {%- match member.parse_percentile %}
+                            {%- when Some with (percentile) %}
+                            <span class="parse {{ member.parse_color_class }}" title="Best Parse: {{ percentile }}">{{
+                                percentile }}</span>
+                            {%- when None %}
+                            <span class="parse parse-none" title="No log data">--</span>
+                            {%- endmatch %}
+
                             {{ member.player.name }} <small>@ {{ member.player.home_world_name() }}</small>
                         </li>
                         {%- endfor %}
@@ -204,5 +208,10 @@ xivpf - listings
         </div>
         {%- endfor %}
     </div>
+    <nav class="pagination-controls requires-js">
+        <a href="javascript:void(0)" class="page-btn prev" title="Previous Page">&lt;</a>
+        <ul class="pagination"></ul>
+        <a href="javascript:void(0)" class="page-btn next" title="Next Page">&gt;</a>
+    </nav>
 </div>
 {% endblock %}

@@ -405,3 +405,117 @@
     color: var(--meta-text);
     border: 1px dashed var(--meta-text);
 }
+
+/* =============================================================================
+   페이지네이션
+   ============================================================================= */
+
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5em;
+    margin: 1.5em 0;
+    padding: 1em 0;
+    border-top: 1px solid var(--muted-border-color);
+    font-size: 1rem;
+    /* 폰트 크기 기준점 통일 */
+}
+
+.pagination {
+    display: flex;
+    gap: 5px;
+    /* 간격 대폭 확장 */
+    list-style: none;
+    padding: 0;
+    margin: 0 1em !important;
+    flex-wrap: wrap;
+    align-items: center;
+    /* 수직 정렬 재시도 */
+    justify-content: center;
+}
+
+.pagination li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 1px !important;
+    padding: 0 !important;
+    width: 2.2em;
+    /* 버튼 크기 확보 */
+    height: 2.2em;
+    flex-shrink: 0;
+    /* 줄어들지 않도록 */
+}
+
+.pagination li a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    /* 패딩 제거하고 크기로 제어 */
+    text-decoration: none;
+    color: var(--text);
+    background-color: var(--muted-border-color);
+    border-radius: 4px;
+    width: 2.2em;
+    height: 2.2em;
+    font-size: inherit;
+    line-height: 1;
+    /* 라인 하이트 초기화 */
+    box-sizing: border-box !important;
+    text-align: center;
+    transition: background-color 0.2s;
+}
+
+.pagination li a:hover {
+    background-color: var(--primary);
+    color: var(--primary-inverse);
+}
+
+.pagination li.active a {
+    background-color: var(--primary);
+    color: var(--primary-inverse);
+    font-weight: bold;
+    pointer-events: none;
+    cursor: default;
+}
+
+.pagination li.disabled a {
+    pointer-events: none;
+    cursor: default;
+    background-color: transparent;
+    color: var(--text);
+}
+
+.page-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    text-decoration: none;
+    color: var(--text);
+    background-color: var(--muted-border-color);
+    border-radius: 4px;
+    width: 2.2em;
+    height: 2.2em;
+    font-size: inherit;
+    line-height: 1;
+    /* 라인 하이트 초기화 */
+    box-sizing: border-box !important;
+    text-align: center;
+    transition: background-color 0.2s, opacity 0.2s;
+    user-select: none;
+    flex-shrink: 0;
+}
+
+.page-btn:hover:not(.disabled) {
+    background-color: var(--primary);
+    color: var(--primary-inverse);
+}
+
+.page-btn.disabled {
+    opacity: 0.5;
+    cursor: default;
+    pointer-events: none;
+}

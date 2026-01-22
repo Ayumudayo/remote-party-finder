@@ -74,13 +74,11 @@ internal class PartyDetailCollector : IDisposable {
 
         Plugin.Log.Info($"PartyDetailCollector: Processing ListingId {detailed.ListingId} Leader {agent->LastLeader}");
 
-        // 멤버 ContentId 수집
+        // 멤버 ContentId 수집 (슬롯 순서 보존을 위해 빈 슬롯도 0으로 포함)
         var memberContentIds = new List<ulong>();
         for (var i = 0; i < detailed.TotalSlots && i < 48; i++) {
             var contentId = detailed.MemberContentIds[i];
-            if (contentId != 0) {
-                memberContentIds.Add(contentId);
-            }
+            memberContentIds.Add(contentId); // 빈 슬롯도 0으로 추가하여 인덱스 보존
         }
 
         // 리더 정보

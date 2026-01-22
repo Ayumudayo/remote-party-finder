@@ -87,8 +87,8 @@
         }
 
         let cookie = document.cookie
-                             .split(';')
-                             .find(row => row.trim().startsWith('lang='));
+            .split(';')
+            .find(row => row.trim().startsWith('lang='));
         if (cookie !== undefined) {
             state.lang = decodeURIComponent(cookie.split('=')[1]);
         }
@@ -100,8 +100,14 @@
                 'duty',
                 'creator',
                 'description',
-                {data: ['centre']},
+                { data: ['centre'] },
             ],
+            page: 50,
+            pagination: {
+                innerWindow: 2,
+                outerWindow: 1,
+                paginationClass: 'pagination',
+            },
         };
         return new List('container', options);
     }
@@ -197,6 +203,62 @@
         });
     }
 
+    function setupPaginationNav() {
+        let prev = document.querySelector('.page-btn.prev');
+        let next = document.querySelector('.page-btn.next');
+
+        if (!prev || !next) return;
+
+        function updateButtons() {
+            let list = state.list;
+            let i = list.i || 1;
+            let page = list.page;
+
+            // 첫 페이지면 prev 비활성화
+            if (i <= 1) {
+                prev.classList.add('disabled');
+            } else {
+                prev.classList.remove('disabled');
+            }
+
+            // 마지막 페이지면 next 비활성화
+            if (i + page > list.size()) {
+                next.classList.add('disabled');
+            } else {
+                next.classList.remove('disabled');
+            }
+
+            // '...' 항목 비활성화 (List.js가 렌더링한 후)
+            setTimeout(() => {
+                let paginationLinks = document.querySelectorAll('.pagination li a');
+                paginationLinks.forEach(a => {
+                    if (a.innerText === '...') {
+                        a.parentElement.classList.add('disabled');
+                    }
+                });
+            }, 0);
+        }
+
+        prev.addEventListener('click', (e) => {
+            e.preventDefault();
+            let list = state.list;
+            let i = (list.i || 1) - list.page;
+            if (i < 1) i = 1;
+            list.show(i, list.page);
+        });
+
+        next.addEventListener('click', (e) => {
+            e.preventDefault();
+            let list = state.list;
+            let i = (list.i || 1) + list.page;
+            if (i > list.size()) return;
+            list.show(i, list.page);
+        });
+
+        state.list.on('updated', updateButtons);
+        updateButtons();
+    }
+
     addJsClass();
     saveLoadState();
     reflectState();
@@ -205,4 +267,5 @@
     setUpCategoryFilter();
     setUpRoleFilter();
     refilter();
+    setupPaginationNav();
 })();
