@@ -9,7 +9,7 @@ const TRANSLATIONS = {
     duty_complete: { en: "Duty Complete", ja: "コンプリート済み", de: "Abgeschlossen", fr: "Déjà terminé", },
     duty_incomplete: { en: "Duty Incomplete", ja: "未コンプリート", de: "Nicht abgeschlossen", fr: "Jamais terminé", },
     weekly_reward_unclaimed: { en: "Duty Complete (Weekly Reward Unclaimed)", ja: "コンプリート済み（今週の週制限報酬：未取得）", de: "Inhalt abgeschlossen (Wöchentliche Vergütung offen)", fr: "Déjà terminée (récompense hebdo. obtenable)", },
-    one_player_per_job: { en: "One Player per Job", ja: "ジョブ重複不可（詳細はヘルプ参照）", de: "Doppelte Jobs nicht möglich (siehe Details)", fr: "Jobs identiques impossibles (voir aide de l'outil de raid)", },
+    one_player_per_job: { en: "One Player per Job", ja: "ジョブ重複不可", de: "Doppelte Jobs nicht möglich", fr: "Jobs identiques impossibles", },
     high_end_duty: { en: "High-end Duty", ja: "高難易度コンテンツ", de: "Schwierige Inhalte", fr: "Missions à difficulté élevée", },
     average_item_level: { en: "Average Item Level", ja: "平均アイテムレベル", de: "Ø Gegen­stands­stufe", fr: "Niveau d'objet moyen", },
     no_listings: { en: "No listings - download the plugin to help contribute!", ja: "募集がありません - プラグインを導入して募集情報を共有しましょう！", de: "Keine Einträge - Lade das Plugin herunter, um zu helfen!", fr: "Aucune annonce - téléchargez le plugin pour contribuer !", },
