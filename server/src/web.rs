@@ -370,7 +370,8 @@ fn assets() -> BoxedFilter<(impl Reply,)> {
                 .or(d3())
                 .or(pico())
                 .or(common_js())
-                .or(list_js()),
+                .or(list_js())
+                .or(translations_js()),
         )
         .boxed()
 }
@@ -449,6 +450,13 @@ fn list_js() -> BoxedFilter<(impl Reply,)> {
     warp::path("list.js")
         .and(warp::path::end())
         .and(warp::fs::file("./assets/list.min.js"))
+        .boxed()
+}
+
+fn translations_js() -> BoxedFilter<(impl Reply,)> {
+    warp::path("translations.js")
+        .and(warp::path::end())
+        .and(warp::fs::file("./assets/translations.js"))
         .boxed()
 }
 
