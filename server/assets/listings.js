@@ -346,46 +346,6 @@
                 elem.textContent = TRANSLATIONS[key][lang];
             }
         });
-        translateFlags(lang);
-    }
-
-    function translateFlags(lang) {
-        if (lang === 'en') return;
-
-        // Create reverse mapping (English Text -> Key) lazily or once
-        const enToKey = {};
-        for (const [key, val] of Object.entries(TRANSLATIONS)) {
-            if (val.en) {
-                enToKey[val.en] = key;
-                // Handle "Objective: Loot" vs "Loot" mismatch if necessary
-                if (val.en.startsWith("Objective: ")) {
-                    enToKey[val.en.replace("Objective: ", "")] = key;
-                }
-            }
-        }
-
-        document.querySelectorAll('.flags').forEach(elem => {
-            if (!elem.dataset.original) {
-                elem.dataset.original = elem.textContent;
-            }
-
-            let text = elem.dataset.original;
-            // Parse [Tag] format
-            text = text.replace(/\[(.*?)\]/g, (match, p1) => {
-                const trimmed = p1.trim();
-                let key = enToKey[trimmed];
-
-                // Try partial match for complex strings if needed, 
-                // e.g. "Duty Complete (Weekly Reward Unclaimed)"
-                // But server likely sends exactly what's in EN translation if generated from same source.
-
-                if (key && TRANSLATIONS[key] && TRANSLATIONS[key][lang]) {
-                    return `[${TRANSLATIONS[key][lang]}]`;
-                }
-                return match;
-            });
-            elem.textContent = text;
-        });
     }
 
     reflectState();

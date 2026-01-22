@@ -126,7 +126,7 @@ xivpf - listings
                     {%- else -%}
                     {%- let (colour_class, prepend_flags) = listing.prepend_flags() -%}
                     {%- if !prepend_flags.is_empty() -%}
-                    <div class="flags {{ colour_class }}">{{ prepend_flags }}</div>
+                    <div class="flags {{ colour_class }}">{{ prepend_flags|safe }}</div>
                     {%- endif -%}
                     <div class="desc-text">{{- desc.trim() }}</div>
                     {%- endif -%}

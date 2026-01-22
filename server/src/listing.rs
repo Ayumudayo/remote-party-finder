@@ -136,40 +136,40 @@ impl PartyFinderListing {
         let mut flags = Vec::new();
 
         if self.objective.contains(ObjectiveFlags::PRACTICE) {
-            flags.push("[Practice]");
+            flags.push("[<span data-i18n='practice'>Practice</span>]");
             colour_class = "desc-green";
         }
 
         if self.objective.contains(ObjectiveFlags::DUTY_COMPLETION) {
-            flags.push("[Duty Completion]");
+            flags.push("[<span data-i18n='duty_completion'>Duty Completion</span>]");
             colour_class = "desc-blue";
         }
 
         if self.objective.contains(ObjectiveFlags::LOOT) {
-            flags.push("[Loot]");
+            flags.push("[<span data-i18n='loot'>Loot</span>]");
             colour_class = "desc-yellow";
         }
 
         if self.conditions.contains(ConditionFlags::DUTY_COMPLETE) {
-            flags.push("[Duty Complete]");
+            flags.push("[<span data-i18n='duty_complete'>Duty Complete</span>]");
         }
 
         if self
             .conditions
             .contains(ConditionFlags::DUTY_COMPLETE_WEEKLY_REWARD_UNCLAIMED)
         {
-            flags.push("[Duty Complete (Weekly Reward Unclaimed)]")
+            flags.push("[<span data-i18n='weekly_reward_unclaimed'>Duty Complete (Weekly Reward Unclaimed)</span>]")
         }
 
         if self.conditions.contains(ConditionFlags::DUTY_INCOMPLETE) {
-            flags.push("[Duty Incomplete]");
+            flags.push("[<span data-i18n='duty_incomplete'>Duty Incomplete</span>]");
         }
 
         if self
             .search_area
             .contains(SearchAreaFlags::ONE_PLAYER_PER_JOB)
         {
-            flags.push("[One Player per Job]");
+            flags.push("[<span data-i18n='one_player_per_job'>One Player per Job</span>]");
         }
 
         (colour_class, flags.join(""))
