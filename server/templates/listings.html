@@ -6,7 +6,7 @@ xivpf - listings
 
 {% block head %}
 <link rel="stylesheet" href="/assets/common.css" />
-<link rel="stylesheet" href="/assets/listings.css?v=13" />
+<link rel="stylesheet" href="/assets/listings.css?v=14" />
 <script defer src="/assets/list.js"></script>
 <script defer src="/assets/translations.js"></script>
 <script defer src="/assets/listings.js?v=3"></script>
@@ -43,56 +43,77 @@ xivpf - listings
         <div>
             <details class="filter-controls">
                 <summary>advanced</summary>
-                <div>
-                    <!-- Category 필터 제거됨 -->
-                    <div class="roles" id="role-filter">
-                        {%- for (role, jobs) in JobFlags::get_all_jobs() %}
-                        <small>
-                            {{ role.text(lang) }}
-                        </small>
-                        <div>
-                            {%- for job in jobs %}
-                            {%- let code = job.classjobs()[0].code() %}
-                            <input type="checkbox" id="{{ code }}" value="{{ job.bits() }}"></input>
-                            <label for="{{ code }}" title="{{ code }}" class="{{ job.html_classes() }}">
-                                <svg viewBox="0 0 32 32">
-                                    <use href="/assets/icons.svg#{{ code }}"></use>
-                                </svg>
-                            </label>
+                <div class="filter-card material-card">
+                    <!-- Roles -->
+                    <div class="filter-section">
+                        <h4>Roles</h4>
+                        <div class="roles" id="role-filter">
+                            {%- for (role, jobs) in JobFlags::get_all_jobs() %}
+                            <div class="role-group">
+                                <small>{{ role.text(lang) }}</small>
+                                <div class="jobs">
+                                    {%- for job in jobs %}
+                                    {%- let code = job.classjobs()[0].code() %}
+                                    <input type="checkbox" id="{{ code }}" value="{{ job.bits() }}">
+                                    <label for="{{ code }}" title="{{ code }}" class="{{ job.html_classes() }}">
+                                        <svg viewBox="0 0 32 32">
+                                            <use href="/assets/icons.svg#{{ code }}"></use>
+                                        </svg>
+                                    </label>
+                                    {%- endfor %}
+                                </div>
+                            </div>
                             {%- endfor %}
                         </div>
-                        {%- endfor %}
                     </div>
-                </div>
-                <!-- 필터 UI 추가 -->
-                <div class="filter-group">
-                    <h4 data-i18n="options">Options</h4>
-                    <label>
-                        <input type="checkbox" id="high-end-filter" value="true" checked>
-                        <span data-i18n="high_end_duty">High-end Duty Only</span>
-                    </label>
-                </div>
-                <div class="filter-group">
-                    <h4 data-i18n="objective">Objective</h4>
-                    <div class="checkbox-group" id="objective-filter">
-                        <label><input type="checkbox" value="1"> <span data-i18n="duty_completion">Duty
-                                Completion</span></label>
-                        <label><input type="checkbox" value="2"> <span data-i18n="practice">Practice</span></label>
-                        <label><input type="checkbox" value="4"> <span data-i18n="loot">Loot</span></label>
+
+                    <!-- Options -->
+                    <div class="filter-section">
+                        <h4 data-i18n="options">Options</h4>
+                        <div class="chip-group">
+                            <input type="checkbox" id="high-end-filter" value="true" checked>
+                            <label for="high-end-filter" class="chip">
+                                <span data-i18n="high_end_duty">High-end Duty Only</span>
+                            </label>
+                        </div>
                     </div>
-                </div>
-                <div class="filter-group">
-                    <h4 data-i18n="conditions">Conditions</h4>
-                    <div class="checkbox-group" id="condition-filter">
-                        <label><input type="checkbox" value="2"> <span data-i18n="duty_complete">Duty
-                                Complete</span></label>
-                        <label><input type="checkbox" value="4"> <span data-i18n="duty_incomplete">Duty
-                                Incomplete</span></label>
-                        <label><input type="checkbox" value="8"> <span data-i18n="weekly_reward_unclaimed">Weekly Reward
-                                Unclaimed</span></label>
-                        <label><input type="checkbox" value="32"> <span data-i18n="one_player_per_job">One Player per
-                                Job</span></label>
-                        <!-- 32 = 1<<5 from SearchAreaFlags::ONE_PLAYER_PER_JOB -->
+
+                    <!-- Objective -->
+                    <div class="filter-section">
+                        <h4 data-i18n="objective">Objective</h4>
+                        <div class="chip-group" id="objective-filter">
+                            <input type="checkbox" id="obj-1" value="1">
+                            <label for="obj-1" class="chip"><span data-i18n="duty_completion">Duty
+                                    Completion</span></label>
+
+                            <input type="checkbox" id="obj-2" value="2">
+                            <label for="obj-2" class="chip"><span data-i18n="practice">Practice</span></label>
+
+                            <input type="checkbox" id="obj-4" value="4">
+                            <label for="obj-4" class="chip"><span data-i18n="loot">Loot</span></label>
+                        </div>
+                    </div>
+
+                    <!-- Conditions -->
+                    <div class="filter-section">
+                        <h4 data-i18n="conditions">Conditions</h4>
+                        <div class="chip-group" id="condition-filter">
+                            <input type="checkbox" id="cond-2" value="2">
+                            <label for="cond-2" class="chip"><span data-i18n="duty_complete">Duty
+                                    Complete</span></label>
+
+                            <input type="checkbox" id="cond-4" value="4">
+                            <label for="cond-4" class="chip"><span data-i18n="duty_incomplete">Duty
+                                    Incomplete</span></label>
+
+                            <input type="checkbox" id="cond-8" value="8">
+                            <label for="cond-8" class="chip"><span data-i18n="weekly_reward_unclaimed">Weekly Reward
+                                    Unclaimed</span></label>
+
+                            <input type="checkbox" id="cond-32" value="32">
+                            <label for="cond-32" class="chip"><span data-i18n="one_player_per_job">One Player per
+                                    Job</span></label>
+                        </div>
                     </div>
                 </div>
             </details>

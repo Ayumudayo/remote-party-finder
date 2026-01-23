@@ -2,74 +2,148 @@
     margin: 0 1em;
 }
 
-.filter-controls>div {
+/* =============================================================================
+   Material Design Filters
+   ============================================================================= */
+
+/* Card Container */
+.material-card {
+    background-color: var(--grey-800);
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+    border: 1px solid var(--muted-border-color);
+}
+
+.filter-section h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 0.8em;
+    color: var(--meta-text);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+/* Chip Styles */
+.chip-group {
     display: flex;
-    flex-flow: row wrap;
+    flex-wrap: wrap;
+    gap: 0.4rem;
 }
 
-.filter-controls .control {
-    display: flex;
-    width: max-content;
-    flex: 0 1 auto;
-    margin-left: 1em;
+.chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.8rem;
+    border-radius: 9999px;
+    border: 1px solid var(--muted-border-color);
+    background-color: transparent;
+    color: var(--text);
+    font-size: 0.85em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
 }
 
-.filter-controls .control>label {
-    display: flex;
-    flex-direction: column;
+.chip:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: var(--text-muted);
 }
 
-.filter-controls .control>label>* {
-    flex: 1 1 auto;
-    margin-bottom: 0;
-    margin-top: .5em;
-}
-
-.filter-controls .roles {
-    width: max-content;
-    flex: 0 1 auto;
-    margin-left: 1em;
-}
-
-.filter-controls .roles>div>input[type=checkbox] {
+/* Hide Checkboxes */
+.chip-group input[type="checkbox"],
+.role-group input[type="checkbox"] {
     display: none;
 }
 
-.filter-controls .roles>div>label {
-    width: 2em;
-    height: 2em;
-    opacity: 50%;
-    margin-right: 0;
-    border: 1px solid currentColor;
+/* Selected Chip State */
+.chip-group input[type="checkbox"]:checked+.chip {
+    background-color: var(--primary);
+    color: var(--primary-inverse);
+    border-color: var(--primary);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.filter-controls .roles>div>label.healer {
-    background-color: var(--healer-green);
+/* Roles Layout */
+.roles {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
-.filter-controls .roles>div>label.tank {
-    background-color: var(--tank-blue);
+.role-group {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
 }
 
-.filter-controls .roles>div>label.dps {
-    background-color: var(--dps-red);
+.role-group small {
+    display: none;
+    /* Hide role labels text */
 }
 
-.filter-controls .roles>div>label:hover {
-    opacity: 75%;
+/* Role Icons */
+.role-group .jobs {
+    display: flex;
+    gap: 0.3rem;
 }
 
-.filter-controls .roles>div>input[type=checkbox]:checked+label {
-    border: 1px solid currentColor;
-    opacity: 100%;
+.role-group label {
+    width: 1.8rem;
+    height: 1.8rem;
+    border: 1px solid transparent;
+    /* No border by default */
+    border-radius: 4px;
+    padding: 2px;
+    cursor: pointer;
+    opacity: 0.5;
+    /* Dimmed when unselected */
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.02);
 }
 
-.filter-controls .roles>div>label>svg {
+.role-group label:hover {
+    opacity: 0.8;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Active Roles */
+.role-group input:checked+label {
+    opacity: 1;
+    /* Glow effect instead of border */
+    background-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 0 1px currentColor;
+}
+
+.role-group label.tank {
+    color: var(--tank-blue);
+}
+
+.role-group label.healer {
+    color: var(--healer-green);
+}
+
+.role-group label.dps {
+    color: var(--dps-red);
+}
+
+.role-group label svg {
     width: 100%;
     height: 100%;
-    fill: var(--icon-gold);
-    opacity: 100%;
+    fill: currentColor;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
 }
+
+/* =============================================================================
+   Listing Layout (Restored)
+   ============================================================================= */
 
 .js #listings {
     border-top: 2px dashed var(--text);
@@ -93,16 +167,12 @@
     display: grid;
     grid-template-columns: 3fr auto 2fr;
     gap: 1em;
-
     margin: 0 -1em;
     padding: 1em;
-
-    /*     background-color: var(--row-background); */
 }
 
 #listings>.listing:nth-child(2n) {
     background-color: var(--muted-border-color);
-    /*     background-color: var(--row-background-alternate); */
 }
 
 #listings>.listing .description {
@@ -141,9 +211,7 @@
 #listings>.listing .meta {
     display: flex;
     flex-direction: column;
-
     margin-left: 1em;
-
     color: var(--meta-text);
     text-align: right;
 }
@@ -165,7 +233,6 @@
 
 #listings>.listing .party {
     margin-top: .5em;
-
     display: grid;
     grid-template-columns: repeat(auto-fit, 2em);
     gap: .5em;
@@ -184,33 +251,19 @@
 }
 
 #listings>.listing .party>.slot:not(.filled).dps.tank {
-    background: linear-gradient(to bottom,
-            var(--tank-blue) 0%,
-            var(--tank-blue) 50%,
-            var(--dps-red) 50%);
+    background: linear-gradient(to bottom, var(--tank-blue) 0%, var(--tank-blue) 50%, var(--dps-red) 50%);
 }
 
 #listings>.listing .party>.slot:not(.filled).dps.healer {
-    background: linear-gradient(to bottom,
-            var(--healer-green) 0%,
-            var(--healer-green) 50%,
-            var(--dps-red) 50%);
+    background: linear-gradient(to bottom, var(--healer-green) 0%, var(--healer-green) 50%, var(--dps-red) 50%);
 }
 
 #listings>.listing .party>.slot:not(.filled).tank.healer {
-    background: linear-gradient(to bottom,
-            var(--tank-blue) 0%,
-            var(--tank-blue) 50%,
-            var(--healer-green) 50%);
+    background: linear-gradient(to bottom, var(--tank-blue) 0%, var(--tank-blue) 50%, var(--healer-green) 50%);
 }
 
 #listings>.listing .party>.slot:not(.filled).tank.healer.dps {
-    background: linear-gradient(to bottom,
-            var(--tank-blue) 0%,
-            var(--tank-blue) 33%,
-            var(--healer-green) 33%,
-            var(--healer-green) 66%,
-            var(--dps-red) 66%);
+    background: linear-gradient(to bottom, var(--tank-blue) 0%, var(--tank-blue) 33%, var(--healer-green) 33%, var(--healer-green) 66%, var(--dps-red) 66%);
 }
 
 #listings>.listing .party>.slot:not(.filled).dps {
@@ -248,77 +301,20 @@
     fill: #C6C6C6;
 }
 
-/* Filter Controls */
-.filter-controls>div {
-    padding: 1rem;
-    background-color: var(--grey-800);
-    border-radius: 4px;
-    margin-top: 0.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.filter-group h4 {
-    margin: 0 0 0.5rem 0;
-    font-size: 0.9em;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.checkbox-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem 1rem;
-}
-
-.checkbox-group label,
-.filter-group label {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    font-size: 0.9rem;
-    cursor: pointer;
-    user-select: none;
-}
-
-.roles {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 0.5rem 1rem;
-    align-items: center;
-}
-
 @media (max-width: 50em) {
+    .material-card {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 1rem;
+    }
+
     #listings>.listing {
-        grid-template-columns: repeat(auto-fit, 100%);
+        grid-template-columns: 1fr;
     }
 
-    #listings>.listing> :not(:first-child) {
-        margin: 0;
-    }
-
-    #listings>.listing .meta {
-        text-align: unset;
-    }
-
-    #listings>.listing .meta>.item {
-        align-self: unset;
-    }
-
-    #listings>.listing .meta>.item .icon {
-        order: 1;
-        margin-left: 0;
-        margin-right: .5em;
-    }
-
-    #listings>.listing .meta>.item .text {
-        order: 2;
-    }
-
-    .filter-controls .roles>div>label:hover {
-        opacity: 50%;
+    .role-group label {
+        width: 2rem;
+        height: 2rem;
     }
 }
 
