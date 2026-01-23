@@ -572,3 +572,18 @@
     border-color: var(--primary);
     outline: none;
 }
+
+/* P1/P2 Dual Parse Display */
+.parse-dual {
+    display: inline-flex;
+    gap: 0.2em;
+    margin-right: 0.3em;
+}
+
+.parse-dual .parse {
+    margin-right: 0;
+    min-width: 0;
+    font-size: 0.75em;
+    padding: 0.1em 0.3em;
+    white-space: nowrap;
+}

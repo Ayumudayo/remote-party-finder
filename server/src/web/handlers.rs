@@ -62,10 +62,10 @@ pub async fn listings_handler(
                     None
                 };
                 
-                let (zone_id, encounter_id) = if let Some(info) = fflogs_info {
-                    (info.zone_id, info.encounter_id)
+                let (zone_id, encounter_id, secondary_encounter_id) = if let Some(info) = fflogs_info {
+                    (info.zone_id, info.encounter_id, info.secondary_encounter_id)
                 } else {
-                    (0, 0)
+                    (0, 0, None)
                 };
 
                 let jobs = &container.listing.jobs_present;
@@ -87,38 +87,44 @@ pub async fn listings_handler(
                             seen_count: 0,
                         });
                         
-                        // Zone 캐시에서 해당 encounter의 parse 조회
-                        let (percentile, color_class) = if zone_id > 0 {
+                        // Parse Data (P1 & P2)
+                        let mut p1_percentile = None;
+                        let mut p1_class = "parse-none".to_string();
+                        let mut p2_percentile = None;
+                        let mut p2_class = "parse-none".to_string();
+
+                        if zone_id > 0 {
                             if let Some(doc) = all_parse_docs.get(&uid) {
                                 if let Some(zone_cache) = doc.zones.get(&zone_key) {
-                                    let enc_key = encounter_id.to_string();
-                                    if let Some(enc_parse) = zone_cache.encounters.get(&enc_key) {
-                                        if enc_parse.percentile < 0.0 {
-                                            (None, "parse-none".to_string())
-                                        } else {
-                                            (
-                                                Some(enc_parse.percentile as u8),
-                                                crate::fflogs_mapping::percentile_color_class(enc_parse.percentile).to_string(),
-                                            )
+                                    // Primary (P1)
+                                    if let Some(enc_parse) = zone_cache.encounters.get(&encounter_id.to_string()) {
+                                        if enc_parse.percentile >= 0.0 {
+                                            p1_percentile = Some(enc_parse.percentile as u8);
+                                            p1_class = crate::fflogs_mapping::percentile_color_class(enc_parse.percentile).to_string();
                                         }
-                                    } else {
-                                        (None, "parse-none".to_string())
                                     }
-                                } else {
-                                    (None, "parse-none".to_string())
+                                    
+                                    // Secondary (P2)
+                                    if let Some(sec_id) = secondary_encounter_id {
+                                        if let Some(enc_parse) = zone_cache.encounters.get(&sec_id.to_string()) {
+                                            if enc_parse.percentile >= 0.0 {
+                                                p2_percentile = Some(enc_parse.percentile as u8);
+                                                p2_class = crate::fflogs_mapping::percentile_color_class(enc_parse.percentile).to_string();
+                                            }
+                                        }
+                                    }
                                 }
-                            } else {
-                                (None, "parse-none".to_string())
                             }
-                        } else {
-                            (None, "parse-none".to_string())
-                        };
+                        }
 
                         crate::template::listings::RenderableMember { 
                             job_id, 
                             player,
-                            parse_percentile: percentile,
-                            parse_color_class: color_class,
+                            parse_percentile: p1_percentile,
+                            parse_color_class: p1_class,
+                            secondary_parse_percentile: p2_percentile,
+                            secondary_parse_color_class: p2_class,
+                            has_secondary: secondary_encounter_id.is_some(),
                         }
                     })
                     .collect();

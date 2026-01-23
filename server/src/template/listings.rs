@@ -26,6 +26,9 @@ pub struct RenderableMember {
     pub player: crate::player::Player,
     pub parse_percentile: Option<u8>,
     pub parse_color_class: String,
+    pub secondary_parse_percentile: Option<u8>,
+    pub secondary_parse_color_class: String,
+    pub has_secondary: bool,
 }
 
 impl RenderableMember {

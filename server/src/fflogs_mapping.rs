@@ -16,6 +16,8 @@ pub struct FFLogsEncounter {
     pub encounter_id: u32,
     /// Difficulty ID (101=Savage, 100=Normal/Ult/Ext)
     pub difficulty_id: Option<u32>,
+    /// Secondary Encounter ID (for split bosses like P2)
+    pub secondary_encounter_id: Option<u32>,
     /// 컨텐츠 이름 (영문)
     pub name: &'static str,
 }
@@ -29,9 +31,11 @@ lazy_static::lazy_static! {
         let mut m = HashMap::new();
 
         // Helper closures
-        let ult = |zone, id, name| FFLogsEncounter { zone_id: zone, encounter_id: id, difficulty_id: Some(100), name };
-        let sav = |zone, id, name| FFLogsEncounter { zone_id: zone, encounter_id: id, difficulty_id: Some(101), name };
-        let ext = |zone, id, name| FFLogsEncounter { zone_id: zone, encounter_id: id, difficulty_id: Some(100), name };
+        let ult = |zone, id, name| FFLogsEncounter { zone_id: zone, encounter_id: id, difficulty_id: Some(100), secondary_encounter_id: None, name };
+        let sav = |zone, id, name| FFLogsEncounter { zone_id: zone, encounter_id: id, difficulty_id: Some(101), secondary_encounter_id: None, name };
+        let ext = |zone, id, name| FFLogsEncounter { zone_id: zone, encounter_id: id, difficulty_id: Some(100), secondary_encounter_id: None, name };
+        // Split encounter helper
+        let sav_split = |zone, id1, id2, name| FFLogsEncounter { zone_id: zone, encounter_id: id1, difficulty_id: Some(101), secondary_encounter_id: Some(id2), name };
 
         // =================================================================
         // Dawntrail (7.4) - AAC Heavyweight Tier (Savage) - M9~M12
@@ -42,7 +46,7 @@ lazy_static::lazy_static! {
         m.insert(1069, sav(73, 101, "AAC Heavyweight M1 (Savage)")); // M9S - Vamp Fatale
         m.insert(1071, sav(73, 102, "AAC Heavyweight M2 (Savage)")); // M10S - Red Hot and Deep Blue
         m.insert(1073, sav(73, 103, "AAC Heavyweight M3 (Savage)")); // M11S - The Tyrant
-        m.insert(1075, sav(73, 104, "AAC Heavyweight M4 (Savage)")); // M12S - The Lindwurm
+        m.insert(1075, sav_split(73, 104, 105, "AAC Heavyweight M4 (Savage)")); // M12S - The Lindwurm (P1 & P2)
 
         // =================================================================
         // Dawntrail (7.4) - Extreme Trial
