@@ -132,7 +132,7 @@ pub async fn listings_handler(
             ListingsTemplate { containers: renderable_containers, lang }
         }
         Err(e) => {
-            eprintln!("{:#?}", e);
+            tracing::error!("Failed to get listings: {:#?}", e);
             ListingsTemplate {
                 containers: Default::default(),
                 lang,
@@ -192,7 +192,7 @@ pub async fn contribute_multiple_handler(
         if result.is_ok() {
             successful += 1;
         } else {
-            eprintln!("{:#?}", result);
+            tracing::warn!("Failed to insert listing: {:#?}", result);
         }
     }
 
@@ -210,7 +210,7 @@ pub async fn contribute_players_handler(
     match result {
         Ok(successful) => Ok(format!("{}/{} players updated", successful, total)),
         Err(e) => {
-            eprintln!("error upserting players: {:#?}", e);
+            tracing::error!("error upserting players: {:#?}", e);
             Ok(format!("0/{} players updated (error)", total))
         }
     }
@@ -238,9 +238,9 @@ pub async fn contribute_detail_handler(
             home_world: detail.home_world,
         };
         let upsert_res = upsert_players(state.players_collection(), &[leader]).await;
-        eprintln!("Upserted leader {}: {:?}", detail.leader_content_id, upsert_res);
+        tracing::debug!("Upserted leader {}: {:?}", detail.leader_content_id, upsert_res);
     } else {
-        eprintln!("Skipping leader upsert: ID={} Name='{}' World={}", detail.leader_content_id, detail.leader_name, detail.home_world);
+        tracing::debug!("Skipping leader upsert: ID={} Name='{}' World={}", detail.leader_content_id, detail.leader_name, detail.home_world);
     }
 
     // listing에 member_content_ids 저장
@@ -258,7 +258,7 @@ pub async fn contribute_detail_handler(
         )
         .await;
 
-    eprintln!("Updated listing {} members: {:?}", detail.listing_id, update_result);
+    tracing::debug!("Updated listing {} members: {:?}", detail.listing_id, update_result);
 
     Ok(warp::reply::json(&"ok"))
 }

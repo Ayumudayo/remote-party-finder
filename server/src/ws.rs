@@ -101,7 +101,7 @@ impl WsApiClient {
     ) {
         while let Some(msg) = outbound_receiver.recv().await {
             let Ok(json) = serde_json::to_string(&msg) else {
-                eprintln!("failed to serialize outbound message: {:#?}", msg);
+                tracing::warn!("failed to serialize outbound message: {:#?}", msg);
                 continue;
             };
 

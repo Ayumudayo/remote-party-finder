@@ -224,7 +224,7 @@ pub fn duty_name<'a>(
         _ => {}
     }
 
-    eprintln!(
+    tracing::debug!(
         "unknown type/category/duty: {:?}/{:?}/{}",
         duty_type, category, duty
     );

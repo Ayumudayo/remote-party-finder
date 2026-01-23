@@ -177,7 +177,7 @@ pub async fn get_players_by_content_ids(
             match res {
                 Ok(p) => Some(p),
                 Err(e) => {
-                    eprintln!("Error reading player: {:?}", e);
+                    tracing::warn!("Error reading player: {:?}", e);
                     None
                 }
             }

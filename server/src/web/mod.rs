@@ -24,7 +24,7 @@ pub async fn start(config: Arc<Config>) -> Result<()> {
     background::spawn_stats_task(Arc::clone(&state));
     background::spawn_fflogs_task(Arc::clone(&state));
 
-    println!("listening at {}", config.web.host);
+    tracing::info!("listening at {}", config.web.host);
     warp::serve(routes::router(state)).run(config.web.host).await;
     Ok(())
 }
@@ -91,13 +91,13 @@ impl State {
             };
 
             if is_conflict {
-                eprintln!("Index option conflict detected for 'updated_at'. Dropping old index and recreating...");
+                tracing::warn!("Index option conflict detected for 'updated_at'. Dropping old index and recreating...");
                 self.collection().drop_index("updated_at_1", None).await
                     .context("could not drop conflicting updated_at index")?;
                 
                 self.collection().create_index(listings_index_model, None).await
                     .context("could not create updated_at index after restart")?;
-                eprintln!("Index 'updated_at' recreated with new options.");
+                tracing::info!("Index 'updated_at' recreated with new options.");
             } else {
                 return Err(e).context("could not create updated_at index");
             }

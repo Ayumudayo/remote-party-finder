@@ -12,7 +12,7 @@ pub fn spawn_stats_task(state: Arc<State>) {
             let all_time = match crate::stats::get_stats(&*stats_state).await {
                 Ok(stats) => stats,
                 Err(e) => {
-                    eprintln!("error generating stats: {:#?}", e);
+                    tracing::error!("error generating stats: {:#?}", e);
                     continue;
                 }
             };
@@ -20,7 +20,7 @@ pub fn spawn_stats_task(state: Arc<State>) {
             let seven_days = match crate::stats::get_stats_seven_days(&*stats_state).await {
                 Ok(stats) => stats,
                 Err(e) => {
-                    eprintln!("error generating stats: {:#?}", e);
+                    tracing::error!("error generating stats: {:#?}", e);
                     continue;
                 }
             };
@@ -39,16 +39,16 @@ pub fn spawn_fflogs_task(state: Arc<State>) {
     if state.fflogs_client.is_some() {
         let parse_state = Arc::clone(&state);
         tokio::task::spawn(async move {
-            eprintln!("Starting FFLogs background service...");
+            tracing::info!("Starting FFLogs background service...");
             loop {
                if let Err(e) = fetch_parses_task(&parse_state).await {
-                   eprintln!("Error in FFLogs background task: {:?}", e);
+                   tracing::error!("Error in FFLogs background task: {:?}", e);
                }
                tokio::time::sleep(Duration::from_secs(60)).await;
             }
         });
     } else {
-        eprintln!("FFLogs client not configured, skipping background service.");
+        tracing::info!("FFLogs client not configured, skipping background service.");
     }
 }
 
@@ -105,7 +105,7 @@ async fn fetch_parses_task(state: &State) -> Result<()> {
     }
     
     let total_players: usize = zone_players.values().map(|(_, v)| v.len()).sum();
-    eprintln!("[FFLogs] Found {} high-end listings, {} unique players across {} zones", 
+    tracing::info!("[FFLogs] Found {} high-end listings, {} unique players across {} zones", 
         listings.len(), total_players, zone_players.len());
     
     let mut fetch_count = 0;
@@ -147,7 +147,7 @@ async fn fetch_parses_task(state: &State) -> Result<()> {
             continue;
         }
         
-        eprintln!("[FFLogs] {} - {} players to fetch", zone_name, players_to_fetch.len());
+        tracing::info!("[FFLogs] {} - {} players to fetch", zone_name, players_to_fetch.len());
         
         let partition = crate::fflogs_mapping::FFLOGS_ZONES
             .get(zone_id)
@@ -206,13 +206,13 @@ async fn fetch_parses_task(state: &State) -> Result<()> {
                     }
                 },
                 Err(e) => {
-                    eprintln!("[FFLogs] Batch error for {}: {:?}", zone_name, e);
+                    tracing::warn!("[FFLogs] Batch error for {}: {:?}", zone_name, e);
                 }
             }
         }
     }
     
-    eprintln!("[FFLogs] Cycle complete: {} batches, {} parses saved, {} skipped (cached)", 
+    tracing::info!("[FFLogs] Cycle complete: {} batches, {} parses saved, {} skipped (cached)", 
         fetch_count, saved_count, skip_count);
     Ok(())
 }
