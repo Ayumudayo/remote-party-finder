@@ -6,10 +6,10 @@ xivpf - listings
 
 {% block head %}
 <link rel="stylesheet" href="/assets/common.css" />
-<link rel="stylesheet" href="/assets/listings.css?v=14" />
+<link rel="stylesheet" href="/assets/listings.css?v=15" />
 <script defer src="/assets/list.js"></script>
 <script defer src="/assets/translations.js"></script>
-<script defer src="/assets/listings.js?v=3"></script>
+<script defer src="/assets/listings.js?v=6"></script>
 {% endblock %}
 
 {% block body %}
@@ -42,7 +42,7 @@ xivpf - listings
         </div>
         <div>
             <details class="filter-controls">
-                <summary>Advanced</summary>
+                <summary data-i18n="advanced">Advanced</summary>
                 <div class="filter-card material-card">
                     <!-- Roles -->
                     <div class="filter-section">
@@ -76,6 +76,8 @@ xivpf - listings
                                 <span data-i18n="high_end_duty">High-end Duty Only</span>
                             </label>
                         </div>
+
+
                     </div>
 
                     <!-- Objective -->
@@ -91,6 +93,14 @@ xivpf - listings
 
                             <input type="checkbox" id="obj-4" value="4">
                             <label for="obj-4" class="chip"><span data-i18n="loot">Loot</span></label>
+                        </div>
+
+                        <div style="margin-top: 1rem;">
+                            <h4 data-i18n="min_item_level">Min Item Level</h4>
+                            <div class="chip-group">
+                                <input type="number" id="min-il-filter" class="il-input" placeholder="0" min="0"
+                                    max="999">
+                            </div>
                         </div>
                     </div>
 
@@ -116,8 +126,9 @@ xivpf - listings
                         </div>
                     </div>
                 </div>
-            </details>
+
         </div>
+        </details>
     </div>
     <div id="listings" class="list">
         {%- if containers.is_empty() %}
@@ -130,7 +141,7 @@ xivpf - listings
             data-pf-category="{{ listing.html_pf_category() }}" data-joinable-roles="{{ listing.joinable_roles() }}"
             data-num-parties="{{ listing.num_parties }}" data-high-end="{{ listing.high_end() }}"
             data-objective="{{ listing.objective.bits() }}" data-conditions="{{ listing.conditions.bits() }}"
-            data-search-area="{{ listing.search_area.bits() }}">
+            data-search-area="{{ listing.search_area.bits() }}" data-min-item-level="{{ listing.min_item_level }}">
 
             <div class="left">
                 {%- let duty_class %}

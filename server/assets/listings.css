@@ -557,3 +557,18 @@
     cursor: default;
     pointer-events: none;
 }
+
+.il-input {
+    width: 6em;
+    background-color: transparent;
+    border: 1px solid var(--muted-border-color);
+    border-radius: 4px;
+    padding: 0.3em 0.5em;
+    color: var(--text);
+    font-size: 0.9em;
+}
+
+.il-input:focus {
+    border-color: var(--primary);
+    outline: none;
+}

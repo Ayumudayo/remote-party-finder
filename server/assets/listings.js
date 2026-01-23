@@ -11,6 +11,7 @@
         objectives: 0,
         conditions: 0,
         onePlayerPerJob: false,
+        minItemLevel: 0,
     };
 
     function addJsClass() {
@@ -54,6 +55,17 @@
             localStorage.setItem('state', JSON.stringify(copy, (_, value) =>
                 typeof value === 'bigint' ? value.toString() : value));
         });
+
+        // Min Item Level
+        const minILFilter = document.getElementById('min-il-filter');
+        if (minILFilter) {
+            minILFilter.addEventListener('input', (e) => {
+                let val = parseInt(e.target.value);
+                if (isNaN(val) || val < 0) val = 0;
+                state.minItemLevel = val;
+                refilter();
+            });
+        }
     }
 
     function reflectState() {
@@ -105,16 +117,25 @@
             }
         }
 
-        let language = document.getElementById('language');
-        if (state.lang === null) {
-            state.lang = language.dataset.accept;
+
+
+        const minILInput = document.getElementById('min-il-filter');
+        if (minILInput) {
+            minILInput.value = state.minItemLevel || 0;
         }
 
+        // Language priority: cookie > dataset.accept > localStorage
+        let language = document.getElementById('language');
         let cookie = document.cookie
             .split(';')
             .find(row => row.trim().startsWith('lang='));
+
         if (cookie !== undefined) {
             state.lang = decodeURIComponent(cookie.split('=')[1]);
+        } else if (language && language.dataset.accept) {
+            state.lang = language.dataset.accept;
+        } else if (state.lang === null) {
+            state.lang = 'en'; // fallback
         }
     }
 
@@ -180,12 +201,20 @@
             return true;
         }
 
+        function minItemLevelFilter(item) {
+            if (!state.minItemLevel || state.minItemLevel <= 0) return true;
+            let itemLevel = parseInt(item.elm.dataset.minItemLevel || '0');
+            return itemLevel >= state.minItemLevel;
+        }
+
         state.list.filter(item =>
             dataCentreFilter(item) &&
             roleFilter(item) &&
             highEndFilter(item) &&
             objectiveFilter(item) &&
-            conditionFilter(item)
+            objectiveFilter(item) &&
+            conditionFilter(item) &&
+            minItemLevelFilter(item)
         );
     }
 
