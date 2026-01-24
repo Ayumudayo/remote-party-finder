@@ -53,7 +53,7 @@ fn listings(state: Arc<State>) -> BoxedFilter<(impl Reply,)> {
                     let mut container: ApiReadableListingContainer = ql.into();
                     
                     // Determine FFLogs Zone ID/Encounter ID if applicable
-                    let fflogs_info = crate::fflogs_mapping::get_fflogs_encounter(container.listing.duty_info.as_ref().map(|d| d.id).unwrap_or(0) as u16);
+                    let fflogs_info = crate::fflogs::mapping::get_fflogs_encounter(container.listing.duty_info.as_ref().map(|d| d.id).unwrap_or(0) as u16);
                     let (zone_id, encounter_id) = if let Some(info) = fflogs_info {
                         (info.zone_id, info.encounter_id)
                     } else {
@@ -84,7 +84,7 @@ fn listings(state: Arc<State>) -> BoxedFilter<(impl Reply,)> {
                                     } else {
                                         (
                                             Some(enc_parse.percentile.round() as u8),
-                                            crate::fflogs_mapping::percentile_color_class(enc_parse.percentile).to_string(),
+                                            crate::fflogs::mapping::percentile_color_class(enc_parse.percentile).to_string(),
                                         )
                                     }
                                 } else {

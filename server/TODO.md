@@ -25,6 +25,9 @@
 
 ## Low Priority (Optional)
 
-### 5. Module Structure Reorganization
-- [ ] 도메인별 모듈 분리 검토 (listing/, player/, fflogs/)
-- 현재 기능 정상 동작하므로 필요시 점진적 리팩터링
+### 5. ~~Module Structure Reorganization~~ ✅
+- [x] `fflogs/` 디렉토리 생성
+  - `client.rs` ← 기존 `fflogs.rs`
+  - `mapping.rs` ← 기존 `fflogs_mapping.rs`  
+  - `cache.rs` ← Parse 캐시 타입 (`mongo.rs`에서 분리)
+- 현재 기능 정상 동작 확인

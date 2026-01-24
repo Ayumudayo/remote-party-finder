@@ -34,7 +34,7 @@ fn lookup_parse_percentiles(
             if let Some(enc_parse) = zone_cache.encounters.get(&encounter_id.to_string()) {
                 if enc_parse.percentile >= 0.0 {
                     p1_percentile = Some(enc_parse.percentile as u8);
-                    p1_class = crate::fflogs_mapping::percentile_color_class(enc_parse.percentile).to_string();
+                    p1_class = crate::fflogs::mapping::percentile_color_class(enc_parse.percentile).to_string();
                 }
             }
             
@@ -43,7 +43,7 @@ fn lookup_parse_percentiles(
                 if let Some(enc_parse) = zone_cache.encounters.get(&sec_id.to_string()) {
                     if enc_parse.percentile >= 0.0 {
                         p2_percentile = Some(enc_parse.percentile as u8);
-                        p2_class = crate::fflogs_mapping::percentile_color_class(enc_parse.percentile).to_string();
+                        p2_class = crate::fflogs::mapping::percentile_color_class(enc_parse.percentile).to_string();
                     }
                 }
             }
@@ -96,7 +96,7 @@ pub async fn listings_handler(
                 let duty_id = container.listing.duty as u16;
                 let high_end = container.listing.high_end();
                 let fflogs_info = if high_end {
-                    crate::fflogs_mapping::get_fflogs_encounter(duty_id)
+                    crate::fflogs::mapping::get_fflogs_encounter(duty_id)
                 } else {
                     None
                 };

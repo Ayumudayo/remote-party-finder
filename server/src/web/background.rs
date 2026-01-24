@@ -75,7 +75,7 @@ async fn fetch_parses_task(state: &State) -> Result<()> {
             continue;
         }
         
-        let fflogs_info = match crate::fflogs_mapping::get_fflogs_encounter(duty_id) {
+        let fflogs_info = match crate::fflogs::mapping::get_fflogs_encounter(duty_id) {
             Some(info) => info,
             None => continue,
         };
@@ -115,7 +115,7 @@ async fn fetch_parses_task(state: &State) -> Result<()> {
     
     // Zone별로 처리
     for (zone_id, (difficulty_id, players)) in &zone_players {
-        let zone_name = crate::fflogs_mapping::FFLOGS_ZONES
+        let zone_name = crate::fflogs::mapping::FFLOGS_ZONES
             .get(zone_id)
             .map(|z| z.name)
             .unwrap_or("Unknown Zone");
@@ -150,7 +150,7 @@ async fn fetch_parses_task(state: &State) -> Result<()> {
         
         tracing::info!("[FFLogs] {} - {} players to fetch", zone_name, players_to_fetch.len());
         
-        let partition = crate::fflogs_mapping::FFLOGS_ZONES
+        let partition = crate::fflogs::mapping::FFLOGS_ZONES
             .get(zone_id)
             .map(|z| z.partition);
         
