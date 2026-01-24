@@ -34,9 +34,13 @@ pub async fn listings_handler(
             containers.sort_by_key(|container| container.updated_minute);
             containers.reverse();
 
-            // Collect all member IDs
+            // Collect all member IDs + leader IDs
             let mut all_content_ids: Vec<u64> = containers.iter()
-                .flat_map(|l| l.listing.member_content_ids.iter().map(|&id| id as u64))
+                .flat_map(|l| {
+                    let member_ids = l.listing.member_content_ids.iter().map(|&id| id as u64);
+                    let leader_id = std::iter::once(l.listing.leader_content_id);
+                    member_ids.chain(leader_id)
+                })
                 .filter(|&id| id != 0)
                 .collect();
             all_content_ids.sort_unstable();
@@ -135,9 +139,45 @@ pub async fn listings_handler(
                     })
                     .collect();
                 
+                // 파티장 로그 계산 (leader_content_id 사용)
+                let leader_content_id = container.listing.leader_content_id;
+                let mut leader_p1_percentile = None;
+                let mut leader_p1_class = "parse-none".to_string();
+                let mut leader_p2_percentile = None;
+                let mut leader_p2_class = "parse-none".to_string();
+
+                if zone_id > 0 && leader_content_id != 0 {
+                    if let Some(doc) = all_parse_docs.get(&leader_content_id) {
+                        if let Some(zone_cache) = doc.zones.get(&zone_key) {
+                            // Primary (P1)
+                            if let Some(enc_parse) = zone_cache.encounters.get(&encounter_id.to_string()) {
+                                if enc_parse.percentile >= 0.0 {
+                                    leader_p1_percentile = Some(enc_parse.percentile as u8);
+                                    leader_p1_class = crate::fflogs_mapping::percentile_color_class(enc_parse.percentile).to_string();
+                                }
+                            }
+                            
+                            // Secondary (P2)
+                            if let Some(sec_id) = secondary_encounter_id {
+                                if let Some(enc_parse) = zone_cache.encounters.get(&sec_id.to_string()) {
+                                    if enc_parse.percentile >= 0.0 {
+                                        leader_p2_percentile = Some(enc_parse.percentile as u8);
+                                        leader_p2_class = crate::fflogs_mapping::percentile_color_class(enc_parse.percentile).to_string();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
                 renderable_containers.push(crate::template::listings::RenderableListing {
                     container,
                     members,
+                    leader_parse_percentile: leader_p1_percentile,
+                    leader_parse_color_class: leader_p1_class,
+                    leader_secondary_parse_percentile: leader_p2_percentile,
+                    leader_secondary_parse_color_class: leader_p2_class,
+                    leader_has_secondary: secondary_encounter_id.is_some(),
                 });
             }
 
@@ -255,7 +295,7 @@ pub async fn contribute_detail_handler(
         tracing::debug!("Skipping leader upsert: ID={} Name='{}' World={}", detail.leader_content_id, detail.leader_name, detail.home_world);
     }
 
-    // listing에 member_content_ids 저장
+    // listing에 member_content_ids 및 leader_content_id 저장
     let member_ids_i64: Vec<i64> = detail.member_content_ids.iter().map(|&id| id as i64).collect();
 
     let update_result = state.collection()
@@ -264,6 +304,7 @@ pub async fn contribute_detail_handler(
             doc! {
                 "$set": {
                     "listing.member_content_ids": member_ids_i64,
+                    "listing.leader_content_id": detail.leader_content_id as i64,
                 }
             },
             None,

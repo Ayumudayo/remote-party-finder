@@ -17,6 +17,12 @@ pub struct ListingsTemplate {
 pub struct RenderableListing {
     pub container: QueriedListing,
     pub members: Vec<RenderableMember>,
+    /// 파티장 로그 정보 (멤버 정보가 없어도 표시 가능)
+    pub leader_parse_percentile: Option<u8>,
+    pub leader_parse_color_class: String,
+    pub leader_secondary_parse_percentile: Option<u8>,
+    pub leader_secondary_parse_color_class: String,
+    pub leader_has_secondary: bool,
 }
 
 /// 멤버 정보 + 해당 슬롯의 잡 ID

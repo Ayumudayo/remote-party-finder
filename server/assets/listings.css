@@ -403,7 +403,9 @@
    ============================================================================= */
 
 /* Parse percentile 표시 */
-#listings>.listing .members-list .parse {
+/* Parse percentile 표시 */
+#listings>.listing .members-list .parse,
+#listings>.listing .creator .parse {
     font-weight: bold;
     font-size: 0.8em;
     padding: 0.1em 0.4em;
@@ -411,6 +413,44 @@
     margin-right: 0.3em;
     min-width: 2em;
     text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* height: 1.5em; 제거 - 패딩으로 자연스럽게 */
+    vertical-align: middle;
+}
+
+/* 파티장 이름과 parse 간격 */
+#listings>.listing .creator>.parse,
+#listings>.listing .creator>.parse-dual {
+    margin-left: 0.5em;
+    /* 간격을 조금 더 여유있게 */
+}
+
+#listings>.listing .creator .parse {
+    margin-right: 0;
+    /* 파티장 parse는 오른쪽에 여백 불필요 (맨 끝이거나 아이콘 앞) */
+}
+
+/* 파티장 행 레이아웃 */
+#listings>.listing .creator {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+#listings>.listing .creator .parse-dual {
+    display: inline-flex;
+    gap: 0.2em;
+    flex-shrink: 0;
+}
+
+#listings>.listing .creator .text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+    /* margin-right 제거 - 박스의 margin-left로 제어 */
 }
 
 /* FFLogs 공식 색상 체계 */
@@ -737,6 +777,8 @@
 
 .parse-dual .parse {
     margin-right: 0;
+    margin-left: 0 !important;
+    /* 상위 규칙 오버라이드: 이중 마진 방지 */
     min-width: 0;
     font-size: 0.75em;
     padding: 0.1em 0.3em;
