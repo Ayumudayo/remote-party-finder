@@ -58,12 +58,12 @@ The project consists of two main components:
 2.  Copy `config.example.toml` to `config.toml`.
 3.  Edit `config.toml` and fill in your details:
     ```toml
+    [mongo]
+    url = "YOUR_MONGODB_CONNECTION_STRING"
+    
     [fflogs]
     client_id = "YOUR_CLIENT_ID"
     client_secret = "YOUR_CLIENT_SECRET"
-    
-    [mongo]
-    connection_string = "YOUR_MONGODB_CONNECTION_STRING"
     ```
 4.  Run the server:
     ```bash
