@@ -98,8 +98,8 @@
             state.roles = newRolesState;
         }
 
-        // New filters reflect
-        document.getElementById('high-end-filter').checked = state.highEnd;
+        // High-end 필터는 항상 활성화 (버튼 제거됨)
+        state.highEnd = true;
 
         const objectiveInputs = document.getElementById('objective-filter').getElementsByTagName('input');
         for (let input of objectiveInputs) {
@@ -270,12 +270,8 @@
     }
 
     function setUpAdvancedFilters() {
-        // High-end
-        const highEnd = document.getElementById('high-end-filter');
-        highEnd.addEventListener('change', (e) => {
-            state.highEnd = e.target.checked;
-            refilter();
-        });
+        // High-end 필터는 항상 활성화됨 (버튼 제거)
+        state.highEnd = true;
 
         // Objective
         const objFilter = document.getElementById('objective-filter');
@@ -377,12 +373,117 @@
         });
     }
 
+    // 시간 표시 i18n 함수
+    function formatRelativeTime(seconds, lang) {
+        const absSeconds = Math.abs(seconds);
+        const isFuture = seconds > 0;
+
+        if (absSeconds < 60) {
+            return TRANSLATIONS.time_now[lang] || 'now';
+        }
+
+        let value, unitKey;
+        if (absSeconds < 3600) {
+            value = Math.floor(absSeconds / 60);
+            unitKey = value === 1 ? 'time_minute' : 'time_minutes';
+        } else {
+            value = Math.floor(absSeconds / 3600);
+            unitKey = value === 1 ? 'time_hour' : 'time_hours';
+        }
+
+        const unit = TRANSLATIONS[unitKey] ? TRANSLATIONS[unitKey][lang] : unitKey.split('_')[1];
+
+        // 일본어는 "5分後" / "5分前" 형식
+        if (lang === 'ja') {
+            const suffix = isFuture ? TRANSLATIONS.time_in[lang] : TRANSLATIONS.time_ago[lang];
+            return `${value}${unit}${suffix}`;
+        }
+        // 독일어 "vor 5 Minuten" / "in 5 Minuten" 형식
+        else if (lang === 'de') {
+            if (isFuture) {
+                return `${TRANSLATIONS.time_in[lang]} ${value} ${unit}`;
+            } else {
+                return `${TRANSLATIONS.time_ago[lang]} ${value} ${unit}`;
+            }
+        }
+        // 영어/프랑스어 "in 5 minutes" / "5 minutes ago"
+        else {
+            if (isFuture) {
+                return `${TRANSLATIONS.time_in[lang] || 'in'} ${value} ${unit}`;
+            } else {
+                return `${value} ${unit} ${TRANSLATIONS.time_ago[lang] || 'ago'}`;
+            }
+        }
+    }
+
+    // 절대 시간 포맷 (툴팁용)
+    function formatAbsoluteTime(timestamp, lang) {
+        const date = new Date(timestamp * 1000);
+        const options = { hour: '2-digit', minute: '2-digit' };
+        return date.toLocaleTimeString(lang === 'ja' ? 'ja-JP' : lang === 'de' ? 'de-DE' : lang === 'fr' ? 'fr-FR' : 'en-US', options);
+    }
+
+    // 시간 표시 업데이트
+    function updateTimeDisplays() {
+        const lang = state.lang || 'en';
+        const now = Math.floor(Date.now() / 1000);
+
+        document.querySelectorAll('.item.expires[data-expires-in]').forEach(elem => {
+            const expiresIn = parseInt(elem.dataset.expiresIn);
+            const textSpan = elem.querySelector('.text');
+            if (textSpan && !isNaN(expiresIn)) {
+                textSpan.textContent = formatRelativeTime(expiresIn, lang);
+                // 툴팁: 만료 예정 절대 시간
+                const expiresAt = now + expiresIn;
+                const label = TRANSLATIONS.expires_at ? TRANSLATIONS.expires_at[lang] : 'Expires at';
+                elem.title = `${label}: ${formatAbsoluteTime(expiresAt, lang)}`;
+            }
+        });
+
+        document.querySelectorAll('.item.updated[data-updated-at]').forEach(elem => {
+            const updatedAt = parseInt(elem.dataset.updatedAt);
+            const textSpan = elem.querySelector('.text');
+            if (textSpan && !isNaN(updatedAt)) {
+                const secondsAgo = now - updatedAt;
+                textSpan.textContent = formatRelativeTime(-secondsAgo, lang);
+                // 툴팁: 업데이트 절대 시간
+                const label = TRANSLATIONS.updated_at ? TRANSLATIONS.updated_at[lang] : 'Updated at';
+                elem.title = `${label}: ${formatAbsoluteTime(updatedAt, lang)}`;
+            }
+        });
+    }
+
+    // Scroll to Top 버튼 설정
+    function setupScrollToTop() {
+        const btn = document.getElementById('scroll-to-top');
+        if (!btn) return;
+
+        // 스크롤 위치에 따라 버튼 표시/숨기기
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                btn.classList.add('visible');
+            } else {
+                btn.classList.remove('visible');
+            }
+        });
+
+        // 클릭 시 상단으로 스크롤
+        btn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+
     reflectState();
     state.list = setUpList();
     setUpDataCentreFilter();
     setUpRoleFilter();
     setUpAdvancedFilters();
     applyTranslations(); // Apply translations on load
+    updateTimeDisplays(); // 시간 표시 i18n 적용
     refilter();
     setupPaginationNav();
+    setupScrollToTop();
+
+    // 1분마다 시간 표시 업데이트
+    setInterval(updateTimeDisplays, 60000);
 })();

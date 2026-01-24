@@ -39,4 +39,14 @@ impl QueriedListing {
     pub fn human_since_updated(&self) -> HumanTime {
         HumanTime::from(-self.since_updated())
     }
+
+    /// JavaScript에서 시간을 처리하기 위한 updated_at Unix timestamp (초 단위)
+    pub fn updated_at_timestamp(&self) -> i64 {
+        self.updated_at.timestamp()
+    }
+
+    /// JavaScript에서 시간을 처리하기 위한 남은 시간 (초 단위)
+    pub fn time_left_seconds(&self) -> i64 {
+        self.time_left as i64
+    }
 }

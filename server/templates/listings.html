@@ -67,18 +67,7 @@ xivpf - listings
                         </div>
                     </div>
 
-                    <!-- Options -->
-                    <div class="filter-section">
-                        <h4 data-i18n="options">Options</h4>
-                        <div class="chip-group">
-                            <input type="checkbox" id="high-end-filter" value="true" checked>
-                            <label for="high-end-filter" class="chip">
-                                <span data-i18n="high_end_duty">High-end Duty Only</span>
-                            </label>
-                        </div>
-
-
-                    </div>
+                    <!-- Options 섹션 제거됨: High-end Duty Only는 최상단 컨트롤로 이동 -->
 
                     <!-- Objective -->
                     <div class="filter-section">
@@ -266,7 +255,7 @@ xivpf - listings
                         </svg>
                     </span>
                 </div>
-                <div class="item expires">
+                <div class="item expires" data-expires-in="{{ renderable.container.time_left_seconds() }}">
                     <span class="text">{{ renderable.container.human_time_left() }}</span>
                     <span title="Expires">
                         <svg class="icon" viewBox="0 0 32 32">
@@ -274,7 +263,7 @@ xivpf - listings
                         </svg>
                     </span>
                 </div>
-                <div class="item updated">
+                <div class="item updated" data-updated-at="{{ renderable.container.updated_at_timestamp() }}">
                     <span class="text">{{ renderable.container.human_since_updated() }}</span>
                     <span title="Updated">
                         <svg class="icon" viewBox="0 0 32 32">
@@ -292,4 +281,10 @@ xivpf - listings
         <a href="javascript:void(0)" class="page-btn next" title="Next Page">&gt;</a>
     </nav>
 </div>
+<!-- Scroll to Top 버튼 -->
+<button id="scroll-to-top" class="scroll-to-top" aria-label="Scroll to top">
+    <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z" />
+    </svg>
+</button>
 {% endblock %}

@@ -16,4 +16,16 @@ const TRANSLATIONS = {
     min_item_level: { en: "Min Item Level", ja: "平均IL", de: "Min. Gegenstandsstufe", fr: "Niveau d'objet min.", },
     no_listings: { en: "No listings - download the plugin to help contribute!", ja: "募集がありません - プラグインを導入して募集情報を共有しましょう！", de: "Keine Einträge - Lade das Plugin herunter, um zu helfen!", fr: "Aucune annonce - téléchargez le plugin pour contribuer !", },
     no_members: { en: "No information available for other members", ja: "他メンバーの情報がありません", de: "Keine Informationen zu anderen Mitgliedern verfügbar", fr: "Aucune information disponible pour les autres membres", },
+    // 시간 표시 관련 번역 (i18n)
+    time_in: { en: "in", ja: "後", de: "in", fr: "dans", },
+    time_ago: { en: "ago", ja: "前", de: "vor", fr: "il y a", },
+    time_seconds: { en: "seconds", ja: "秒", de: "Sekunden", fr: "secondes", },
+    time_second: { en: "second", ja: "秒", de: "Sekunde", fr: "seconde", },
+    time_minutes: { en: "minutes", ja: "分", de: "Minuten", fr: "minutes", },
+    time_minute: { en: "minute", ja: "分", de: "Minute", fr: "minute", },
+    time_hours: { en: "hours", ja: "時間", de: "Stunden", fr: "heures", },
+    time_hour: { en: "hour", ja: "時間", de: "Stunde", fr: "heure", },
+    time_now: { en: "now", ja: "たった今", de: "jetzt", fr: "maintenant", },
+    expires_at: { en: "Expires at", ja: "終了予定", de: "Läuft ab um", fr: "Expire à", },
+    updated_at: { en: "Updated at", ja: "更新時刻", de: "Aktualisiert um", fr: "Mis à jour à", },
 };
