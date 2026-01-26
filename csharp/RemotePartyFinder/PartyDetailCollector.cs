@@ -20,6 +20,7 @@ namespace RemotePartyFinder;
 internal class PartyDetailCollector : IDisposable {
     private Plugin Plugin { get; }
     private HttpClient Client { get; } = new();
+    private System.Diagnostics.Stopwatch ScanTimer { get; } = new(); // 성능 최적화용 타이머
     private bool wasAddonOpen = false;
     // 이미 업로드한 리스팅을 캐시하여 중복 업로드 방지
     private Dictionary<uint, DateTime> UploadedDetails { get; } = new();
@@ -27,6 +28,7 @@ internal class PartyDetailCollector : IDisposable {
 
     internal PartyDetailCollector(Plugin plugin) {
         this.Plugin = plugin;
+        this.ScanTimer.Start();
         this.Plugin.Framework.Update += this.OnUpdate;
     }
 
@@ -35,6 +37,10 @@ internal class PartyDetailCollector : IDisposable {
     }
 
     private unsafe void OnUpdate(IFramework framework) {
+        // 성능 최적화: 200ms마다 체크 (UI 감지에 무리 없는 수준)
+        if (this.ScanTimer.ElapsedMilliseconds < 200) return;
+        this.ScanTimer.Restart();
+
         // UI 창(Addon)이 열려있는지 확인
         // GetAddonByName returns 0 if addon is not loaded/visible
         nint addonPtr = this.Plugin.GameGui.GetAddonByName("LookingForGroupDetail", 1);
