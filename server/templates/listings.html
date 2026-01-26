@@ -6,7 +6,7 @@ xivpf - listings
 
 {% block head %}
 <link rel="stylesheet" href="/assets/common.css" />
-<link rel="stylesheet" href="/assets/listings.css?v=15" />
+<link rel="stylesheet" href="/assets/listings.css?v=19" />
 <script defer src="/assets/list.js"></script>
 <script defer src="/assets/translations.js"></script>
 <script defer src="/assets/listings.js?v=6"></script>
@@ -56,7 +56,7 @@ xivpf - listings
                                     {%- let code = job.classjobs()[0].code() %}
                                     <input type="checkbox" id="{{ code }}" value="{{ job.bits() }}">
                                     <label for="{{ code }}" title="{{ code }}" class="{{ job.html_classes() }}">
-                                        <svg viewBox="0 0 32 32">
+                                        <svg viewBox="0 0 32 32" aria-hidden="true">
                                             <use href="/assets/icons.svg#{{ code }}"></use>
                                         </svg>
                                     </label>
@@ -136,7 +136,8 @@ xivpf - listings
                             <div class="content-select-container">
                                 <button type="button" class="content-select-trigger" id="content-select-trigger">
                                     <span data-i18n="select_content">Select Content...</span>
-                                    <svg viewBox="0 0 24 24" fill="currentColor" class="dropdown-arrow">
+                                    <svg viewBox="0 0 24 24" fill="currentColor" class="dropdown-arrow"
+                                        aria-hidden="true">
                                         <path d="M7 10l5 5 5-5z" />
                                     </svg>
                                 </button>
@@ -214,7 +215,7 @@ xivpf - listings
                     {%- endmatch %}
                     <div class="slot{{ filled }}{{ role_class }}" title="{{ title }}">
                         {%- if !filled.is_empty() %}
-                        <svg viewBox="0 0 32 32">
+                        <svg viewBox="0 0 32 32" aria-hidden="true">
                             <use href="/assets/icons.svg#{{ title }}"></use>
                         </svg>
                         {%- endif %}
@@ -232,7 +233,7 @@ xivpf - listings
                         {%- for member in renderable.members %}
                         <li>
                             {%- if let Some(code) = member.job_code() %}
-                            <svg class="job-icon {{ member.role_class() }}" viewBox="0 0 32 32">
+                            <svg class="job-icon {{ member.role_class() }}" viewBox="0 0 32 32" aria-hidden="true">
                                 <use href="/assets/icons.svg#{{ code }}"></use>
                             </svg>
                             {%- endif %}
@@ -312,7 +313,7 @@ xivpf - listings
                     {%- endmatch %}
                     {%- endif %}
                     <span title="Creator">
-                        <svg class="icon" viewBox="0 0 32 32">
+                        <svg class="icon" viewBox="0 0 32 32" aria-hidden="true">
                             <use href="/assets/icons.svg#user"></use>
                         </svg>
                     </span>
@@ -320,7 +321,7 @@ xivpf - listings
                 <div class="item world">
                     <span class="text">{{ listing.created_world_string() }}</span>
                     <span title="Created on">
-                        <svg class="icon" viewBox="0 0 32 32">
+                        <svg class="icon" viewBox="0 0 32 32" aria-hidden="true">
                             <use href="/assets/icons.svg#sphere"></use>
                         </svg>
                     </span>
@@ -328,7 +329,7 @@ xivpf - listings
                 <div class="item expires" data-expires-in="{{ renderable.container.time_left_seconds() }}">
                     <span class="text">{{ renderable.container.human_time_left() }}</span>
                     <span title="Expires">
-                        <svg class="icon" viewBox="0 0 32 32">
+                        <svg class="icon" viewBox="0 0 32 32" aria-hidden="true">
                             <use href="/assets/icons.svg#stopwatch"></use>
                         </svg>
                     </span>
@@ -336,7 +337,7 @@ xivpf - listings
                 <div class="item updated" data-updated-at="{{ renderable.container.updated_at_timestamp() }}">
                     <span class="text">{{ renderable.container.human_since_updated() }}</span>
                     <span title="Updated">
-                        <svg class="icon" viewBox="0 0 32 32">
+                        <svg class="icon" viewBox="0 0 32 32" aria-hidden="true">
                             <use href="/assets/icons.svg#clock"></use>
                         </svg>
                     </span>
@@ -353,7 +354,7 @@ xivpf - listings
 </div>
 <!-- Scroll to Top 버튼 -->
 <button id="scroll-to-top" class="scroll-to-top" aria-label="Scroll to top">
-    <svg viewBox="0 0 24 24" fill="currentColor">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z" />
     </svg>
 </button>

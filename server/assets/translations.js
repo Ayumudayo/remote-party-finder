@@ -5,7 +5,7 @@ const TRANSLATIONS = {
     objective: { en: "Purpose", ja: "目的", de: "Ziel", fr: "Objectif", },
     duty_completion: { en: "Duty Completion", ja: "コンプリート目的", de: "Raid abschließen", fr: "Réussir le raid", },
     practice: { en: "Practice", ja: "練習", de: "Raid üben", fr: "Entraînement", },
-    loot: { en: "Objective: Loot", ja: "目的：周回", de: "Ziel: Beute sammeln", fr: "Objectif [Plusieurs fois]", },
+    loot: { en: "Loot", ja: "周回", de: "Beute sammeln", fr: "Plusieurs fois", },
     conditions: { en: "Requirements", ja: "参加条件設定", de: "Bedingungen", fr: "Conditions", },
     duty_complete: { en: "Duty Complete", ja: "コンプリート済み", de: "Abgeschlossen", fr: "Déjà terminé", },
     duty_incomplete: { en: "Duty Incomplete", ja: "未コンプリート", de: "Nicht abgeschlossen", fr: "Jamais terminé", },

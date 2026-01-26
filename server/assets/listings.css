@@ -7,11 +7,13 @@
    ============================================================================= */
 
 /* Card Container */
+/* Card Container */
 .material-card {
-    background-color: var(--grey-800);
-    border-radius: 8px;
-    padding: 1rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    background-color: rgba(30, 33, 36, 0.95);
+    /* 아주 어둡고 불투명에 가까운 배경으로 가독성 확보 */
+    border-radius: 12px;
+    padding: 1.2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
@@ -184,7 +186,8 @@
 }
 
 #listings>.listing:nth-child(2n) {
-    background-color: var(--muted-border-color);
+    background-color: rgba(255, 255, 255, 0.025);
+    /* 리스팅 구분감 복구 (은은한 밝음) */
 }
 
 #listings>.listing .description {
@@ -867,5 +870,149 @@
     .high-end-toggle .chip {
         font-size: 0.75em;
         padding: 0.3rem 0.6rem;
+    }
+}
+
+/* =============================================================================
+   Focus Visible 스타일 (접근성)
+   ============================================================================= */
+
+.chip:focus-visible,
+.role-group label:focus-visible,
+.pagination li a:focus-visible,
+.page-btn:focus-visible,
+.content-select-trigger:focus-visible,
+#scroll-to-top:focus-visible,
+#data-centre-filter:focus-visible,
+.search:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+/* role-group label이 키보드로 선택 가능하도록 tabindex 지원 */
+.role-group input:focus-visible+label {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+/* =============================================================================
+   마이크로 애니메이션 (UX)
+   ============================================================================= */
+
+#listings>.listing {
+    transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, background-color 0.15s ease-out;
+}
+
+#listings>.listing:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+/* Chip 호버/활성 애니메이션 */
+.chip {
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
+}
+
+.chip:active {
+    transform: scale(0.97);
+}
+
+/* 버튼 호버 효과 강화 */
+.page-btn,
+.pagination li a {
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.page-btn:active,
+.pagination li a:active {
+    transform: scale(0.95);
+}
+
+/* =============================================================================
+   터치 최적화 (모바일)
+   ============================================================================= */
+
+body {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
+}
+
+/* 터치 타겟 최소 크기 보장 (44px 권장) */
+.chip {
+    min-height: 2.2rem;
+}
+
+.page-btn,
+.pagination li a {
+    min-width: 2.5rem;
+    min-height: 2.5rem;
+}
+
+@media (max-width: 50em) {
+    .role-group label {
+        min-width: 2.5rem;
+        min-height: 2.5rem;
+    }
+}
+
+/* =============================================================================
+   스켈레톤 로딩 UI
+   ============================================================================= */
+
+.skeleton {
+    background: linear-gradient(90deg,
+            var(--grey-800, #2C2F34) 25%,
+            var(--muted-border-color) 50%,
+            var(--grey-800, #2C2F34) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: 4px;
+}
+
+.skeleton-text {
+    height: 1em;
+    margin-bottom: 0.5em;
+}
+
+.skeleton-text.short {
+    width: 60%;
+}
+
+.skeleton-text.medium {
+    width: 80%;
+}
+
+.skeleton-text.full {
+    width: 100%;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* =============================================================================
+   Reduced Motion 지원 (접근성)
+   ============================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    #listings>.listing,
+    .chip,
+    .page-btn,
+    .pagination li a,
+    .scroll-to-top,
+    .skeleton {
+        transition: none !important;
+        animation: none !important;
+    }
+
+    #listings>.listing:hover {
+        transform: none;
     }
 }
